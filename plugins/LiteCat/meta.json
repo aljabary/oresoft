@@ -1,0 +1,19 @@
+{
+"name":"Lite Cat",
+"base_class":"LiteCat",
+"version":"1.0.0",
+"info":"",
+"type":"tools",
+"permission":["CATEGORY"],
+"local_api":"open",
+"logo":"logo.png",
+"description":"Create and customize category",
+"developer":{
+"name":"RockBurst Digital 5419",
+"url":"http://sellupbooster.com",
+"email":"official@sellupbooster.com"
+},
+"license":"",
+"price":0
+
+}

@@ -1,0 +1,25 @@
+{
+"name":"User Management",
+"base_class":"User_Management",
+"version":"1.1.0",
+"type":"tools",
+"info":"{$this->url}temp/about.txt",
+"description":"User management, add account, setting account and manage administration web",
+"permission":["USER"],
+"logo":"logo.png",
+"target_version":"0.1.0",
+"developer":{
+"name":"RockBurst Digital",
+"url":"http://oreple.com",
+"email":"official@oreple.com",
+"email":"official@oreple.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt",
+"requirement":{
+"apps":[]
+},
+"price":0,
+"packages":["Test_Package"]
+}

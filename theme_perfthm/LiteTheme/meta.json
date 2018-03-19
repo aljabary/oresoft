@@ -1,0 +1,22 @@
+{
+"name":"Lite Theme",
+"base_class":"LiteTheme",
+"version":"1.0.0",
+"permission":["MEDIA","ARTICLE.READ","CATEGORY.READ","MESSAGE","COMMENT","USER"],
+"logo":"ab.png",
+
+"type":"theme",
+"info":"{$this->url}temp/about.txt",
+"description":"Create and Read message",
+"target_version":"0.1.0",
+"developer":{
+"name":"RockBurst Digital 5419",
+"url":"http://sellupbooster.com",
+"email":"official@sellupbooster.com",
+"email":"official@sellupbooster.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt",
+"price":0
+}

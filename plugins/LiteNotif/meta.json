@@ -1,0 +1,24 @@
+{
+"name":"Lite Notif",
+"base_class":"LiteNotif",
+"version":"1.1.0",
+"type":"tools",
+"info":"{$this->url}temp/about.txt",
+"description":"Notification System",
+"permission":["NOTIFICATION","USER.READ"],
+"logo":"logo.png",
+"target_version":"0.1.0",
+"developer":{
+"name":"RockBurst Digital",
+"url":"http://oreple.com",
+"email":"official@oreple.com",
+"email":"official@oreple.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt",
+"requirement":{
+"apps":[]
+},
+"price":0
+}

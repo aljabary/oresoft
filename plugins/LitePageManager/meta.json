@@ -1,0 +1,21 @@
+{
+"name":"Lite Page Manager",
+"base_class":"LitePageManager",
+"version":"1.0.0",
+"description":"Create Page and Edit Page Content",
+"permission":["PAGE","ARTICLE.READ","CATEGORY.READ"],
+"local_api":"open",
+"logo":"logo.png",
+"target_version":"0.1.0",
+"type":"tools",
+"info":"{$this->url}temp/about.txt",
+"developer":{
+"name":"RockBurst Digital 5419",
+"url":"http://sellupbooster.com",
+"email":"official@sellupbooster.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt"
+
+}

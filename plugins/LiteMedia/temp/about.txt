@@ -1,0 +1,2 @@
+﻿Lite Media is default media aplication for Proxtrasoft, it's free and opensource. Realease under GNU/GPL, License is same with Proxtrasoft's License. 
+You can upload and manage your media like Photos, Videos and files

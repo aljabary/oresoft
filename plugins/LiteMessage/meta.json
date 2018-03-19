@@ -1,0 +1,24 @@
+{
+"name":"Lite Message",
+"base_class":"LiteMessage",
+"version":"1.0.0",
+"type":"tools",
+"info":"{$this->url}temp/about.txt",
+"description":"Create and Read message",
+"permission":["MESSAGE","USER.READ"],
+"logo":"logo.png",
+"target_version":"0.1.0",
+"developer":{
+"name":"RockBurst Digital 5419",
+"url":"http://sellupbooster.com",
+"email":"official@sellupbooster.com",
+"email":"official@sellupbooster.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt",
+"requirement":{
+"apps":["LiteMedia v.1.0.0"]
+},
+"price":0
+}

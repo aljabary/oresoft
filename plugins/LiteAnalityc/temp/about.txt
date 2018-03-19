@@ -1,0 +1,2 @@
+﻿LiteAnalityc is default analityc aplication for Proxtrasoft, it's free and opensource. Realease under GNU/GPL, License is same with Proxtrasoft's License. 
+You can crate, update, edit, and publish your article.

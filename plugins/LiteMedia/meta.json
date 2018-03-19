@@ -1,0 +1,21 @@
+{
+"name":"Lite Media",
+"base_class":"LiteMedia",
+"version":"1.0.0",
+"type":"tools",
+"info":"{$this->url}temp/about.txt",
+"description":"Upload and manage media",
+"permission":["MEDIA"],
+"logo":"logo.png",
+"local_api":"open",
+"developer":{
+"name":"RockBurst Digital 5419",
+"url":"http://sellupbooster.com",
+"email":"official@sellupbooster.com",
+"email":"official@sellupbooster.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt",
+"price":0
+}

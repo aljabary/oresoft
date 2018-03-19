@@ -1,0 +1,19 @@
+{
+"name":"Lite Analityc",
+"base_class":"LiteAnalityc",
+"version":"1.0.0",
+"type":"tools",
+"info":"{$this->url}temp/about.txt",
+"description":"Analize your website data",
+"permission":["ANALITYC","ARTICLE"],
+"logo":"logo.png",
+"developer":{
+"name":"RockBurst Digital 5419",
+"url":"http://sellupbooster.com",
+"email":"official@sellupbooster.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt",
+"price":0
+}
