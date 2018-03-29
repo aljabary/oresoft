@@ -17,7 +17,7 @@ class Setting {
 		//$this->Plugin_Handler->Base_Class.'/';
 	}	
 	public function setVal($xclass, $param, $val){
-		$db = Xcon();
+		$db = Xcon(PERMISSION);
 		$bc = $this->Plugin_Handler->Base_Class;
 		$q 	=	mysqli_query($db,"select * from setting where plugins='$bc' and xclass='$xclass' and param='$param'");
 		if(mysqli_num_rows($q)>0){
@@ -28,7 +28,7 @@ class Setting {
 		return $qq;
 	}
 	public function getVal($xclass, $param){
-		$db = Xcon();
+		$db = Xcon(PERMISSION);
 		$bc = $this->Plugin_Handler->Base_Class;
 		$q 	=	mysqli_query($db,"select * from setting where plugins='$bc' and xclass='$xclass' and param='$param'");
 		while($g=mysqli_fetch_array($q)){

@@ -9,18 +9,22 @@ This class contain Article object
 namespace Prox\Engine\Article;
 use Prox\System\Date_Time;
 use Prox\Engine\User;
-use Prox\Engine\Photo;
+use Prox\Engine\Media;
 use Prox\Engine\Category;
 use Prox\Engine\Article;
 class Core  {
 	public $Obj;
 	private $i;
-function __construct($id=0,$g=null){
-	$this->Obj[0] 	= 	new Obj($id,$g);
-	$this->i		=	0;
+	private $BC;
+function __construct($bc,$id=0,$g=null){
+	$this->i	=	0;
+	$this->BC	=	$bc;
+	if($id){
+	$this->Obj[] 	= 	new Obj($bc,$id);
+	}
 }
-function gen($id=0,$g=null){
-	$this->Obj[$this->i++] = new Obj($id,$g);
+function gen($id=0){
+	$this->Obj[] = new Obj($this->BC,$id);
 }
 
 }
@@ -39,9 +43,30 @@ class Obj{
 	public $Photo;
 	public $status;
 	private $Database;
-	function __construct($id=0,$g=null){
-		if($id>0){
+	private $BC;
+	function __construct($bc,$id){
+		$this->BC	=	$bc;
+		$media		=	new Media($bc,0,'Photo');
 		$this->Database = Xcon(PERMISSION);
+	 if(is_array($id)){
+		 $g = $id;
+			$this->id 			= $g['id'];
+			$this->User 		= new User($g['user']);
+			$this->title 		= htmlspecialchars($g['title']);
+			$this->content 		= $g['content'];
+			$this->status 		= htmlspecialchars($g['status']);
+			$this->view 		= htmlspecialchars($g['view']);
+			$this->headline 	= htmlspecialchars($g['headline']);
+			$this->keyword 		= htmlspecialchars($g['keyword']);
+			$media->gen($g['photo'],'Photo');
+			$this->Photo 		= $media->Obj['Photo'][0];
+			$dt					=	new Date_Time($g['dt']);
+			$this->date 		= $dt->it;
+			$this->tags			=	$this->getTags();
+			$this->Category		=	$this->getCategories();
+			$this->url			=	PROX_URL."read/".$g['id']."/".seo_link($g['title']);
+	}else if($id>0){
+		
 		$q 	=	mysqli_query($this->Database,"select * from article where id='$id'");
 		while($g=mysqli_fetch_array($q)){
 			$this->id 			= $g['id'];
@@ -52,29 +77,16 @@ class Obj{
 			$this->view 		= htmlspecialchars($g['view']);
 			$this->headline 	= htmlspecialchars($g['headline']);
 			$this->keyword 		= htmlspecialchars($g['keyword']);
-			$this->Photo 		= new Photo($g['photo']);
+			$media->gen($g['photo'],'Photo');
+			$this->Photo 		= $media->Obj['Photo'][0];
 			$dt					=	new Date_Time($g['dt']);
 			$this->date 		= $dt->it;
 			$this->tags			=	$this->getTags();
 			$this->Category		=	$this->getCategories();
 			$this->url			=	PROX_URL."read/".$id."/".seo_link($g['title']);
 		}
-	}else if($g){
-			$this->id 			= $g['id'];
-			$this->User 		= new User($g['user']);
-			$this->title 		= htmlspecialchars($g['title']);
-			$this->content 		= $g['content'];
-			$this->status 		= htmlspecialchars($g['status']);
-			$this->view 		= htmlspecialchars($g['view']);
-			$this->headline 	= htmlspecialchars($g['headline']);
-			$this->keyword 		= htmlspecialchars($g['keyword']);
-			$this->Photo 		= new Photo($g['photo']);
-			$dt					=	new Date_Time($g['dt']);
-			$this->date 		= $dt->it;
-			$this->tags			=	$this->getTags();
-			$this->Category		=	$this->getCategories();
-			$this->url			=	PROX_URL."read/".$id."/".seo_link($g['title']);
 	}
+	
 }
 	public function __get($name)
   {
@@ -95,13 +107,14 @@ private function getTags(){
 }
 private function getCategories(){
 		$db = $this->Database;
-		$data = array(); $i=0;
+		$cc = new Category($this->BC);
+//$cc->Obj = array(); $i=0;
 		$q 	=	mysqli_query($db,"select * from category_article where article='$this->id'");
 		while($g=mysqli_fetch_array($q)){
-		$data[$i] = new Category($g['category']);
-		$i++;
+		$cc->gen($g['category']);
+		
 		}
-		return $data;
+		return $cc->Obj;
 }
 }
 

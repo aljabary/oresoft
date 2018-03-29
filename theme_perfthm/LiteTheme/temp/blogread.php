@@ -65,7 +65,7 @@ $Me->showHook($data['args'],$data['param'],'Body',1);
                     <div class="vd_comments-form clearfix">
                       <h3><?php echo BCL('LiteTheme','leave_com')?></h3>
                       <form class="clearfix" action="<?php echo PROX_URL.'ajax.php'; ?>" method="post">	
-<input type="hidden" name="class" value="LiteTheme"/>	
+<input type="hidden" name="class" value="LiteTheme\MainClass"/>	
 <input type="hidden" name="function" value="sendComment"/>	
 <input type="hidden" name="plugins" value="1" />
 					  <?php if($data['im']->id < 1 && $Me->Setting->getVal('comment','mod')=='on'){ ?>

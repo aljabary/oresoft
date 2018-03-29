@@ -6,6 +6,9 @@
 @author		: Abu Zidane Asadudin Shakir Al-Jabary
 This class handling Home page (frontend)
 **/
+namespace Prox\Engine;
+use Prox\System\Site;
+use Prox\Plugins\Plugins_Manager;
 class HomePage{
 public $Plugins_Manager; //Plugins Core
 public $routing;
@@ -17,17 +20,17 @@ public $site;
 function __construct($rt,$pc){
 		$this->routing 	= $rt;
 		$bc				= $rt[1];
-		$db 			= Xcon();
+		$db 			= Xcon(PERMISSION);
 		//$this->trigger('feature','Backend',$rt);
 		$this->Plugins_Manager = $pc;
 		//$this->Plugins_Manager->init('feature'); 			
-	//	$this->Plugins_Manager->trigger('feature','Homepage',$rt);	
+		//$this->Plugins_Manager->trigger('feature','Homepage',$rt);	
 		$pl   		  = $this->Plugins_Manager->plugins['feature'];
 		
 		$this->Plugins_Manager->plugins['feature'] = $pl;//$this->plugins['tools'];
 		$site 			= new Site();
 		$this->site 	= $site;
-		$PXzTheme		=	$site->theme;
+		$PXzTheme		=	'\\'.$site->theme.'\MainClass';
 		$param 			=	array_merge($this->routing,array("this"=>'PERMISSION'));
 		$PXTheme		=	$this->site->theme;
 		$this->plug 	=	new $PXzTheme('Homepage',$param);
@@ -45,41 +48,43 @@ file_put_contents(PROX_Domain.'/data.txt',$data);
 	$user	= new User();$xr = $PXargs;
 	$param		 	=	array();
 	$view_title		= 	$this->site->name;
-	$PXzTheme		=	$this->site->theme;
+	$PXzTheme		=	'\\'.$this->site->theme.'\MainClass';
 	$obj 			=	array();
 	$ua 			=	new UserAgent(PERMISSION);
 	$ua->detect();
 	
-	$pagetype	=	'Home';$theobject = new Article(0);	//null page id
+	$pagetype	=	'Home';$theobject = new Article(PERMISSION);	//null page id
 	switch($PXargs){
-		case 'Page' :	$theobject 			= new Page(0);
-						$theobject->getBySlug($this->routing[0]);
+		case 'Page' :	$theobjectx 			= new Page(PERMISSION);
+						$theobjectx->getBySlug($this->routing[0]);
+						$theobject	=	$theobjectx->Obj[0];
 						if($theobject->id < 1){
 							$PXargs = 'NotFound'; $pagetype	=	'NotFound';
 						}else{
-							$ac = new Page_Core(PERMISSION);
+							$ac = new Page(PERMISSION);
 							$ac->View($theobject,PERMISSION);
 							$obj = array(theobject);
 						}
 						$pagetype	=	'Page';
 						break;
-		case 'Read' : 	$theobject 			= new Article($this->routing[1]);
+		case 'Read' : 	$ac 			= new Article(PERMISSION,$this->routing[1]);
+						$theobject		=	$ac->Obj[0];
 						if($theobject->id < 1){
 							$PXargs = 'NotFound';	 $pagetype	=	'NotFound';					
 						}else{
-							$ac = new Article_Core(PERMISSION);
 							$ac->View($theobject,PERMISSION);
 							$obj = array('Article'=>$theobject);
 						}
 						$pagetype	=	'Article';
 						break;	
-		case 'Category':	$theobject 			= new Category(0);
-							$theobject->getByName($this->routing[1]);
+		case 'Category':$cc 			= new Category(PERMISSION,$this->routing[1]);
+						$theobject		=	$cc->Obj[0];
+						$theobject->getByName($this->routing[1]);
 						if($theobject->id < 1){
 							$PXargs = 'NotFound';		 $pagetype	=	'NotFound';				
 						}else{
-							$ac = new Category_Core(PERMISSION);
-							$ac->View($theobject,PERMISSION);
+							
+							$cc->View($theobject,PERMISSION);
 							$obj = array('Category'=>$theobject);
 						}
 						$pagetype	=	'Category'; 

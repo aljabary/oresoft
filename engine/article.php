@@ -16,8 +16,8 @@ class Article extends Core{
 	initialize permission for plugins
 	*/
 	
-function __construct($bc,$id=0,$g=null){
-	parent::__construct($id,$g);
+function __construct($bc,$id=0){
+	parent::__construct($bc,$id);
 	$this->permission 	= new Permission($bc);
 	$this->Base_Class = $bc;	
 }
@@ -136,7 +136,7 @@ function getList($status, $st, $nd){
 	$this->permission->validate('ARTICLE', 'READ', 13); //required permission
 	$status = addslashes($status);
 	$db 	= Xcon(PERMISSION);
-	$data 	= array(); $i=0;
+	$this->Obj 	= array(); $i=0;
 	$ix 	= 0;
 	if($st >0){
 		$ix =$nd*$st;
@@ -147,7 +147,7 @@ function getList($status, $st, $nd){
 	//$article = new Article($this->Base_Class);
 	$q = mysqli_query($db,"select * from article $stat order by id desc limit $ix,$nd");
 	while($g = mysqli_fetch_array($q)){
-		 $this->gen($g['id']);		
+		 $this->gen($g);		
 		//$data[$i] = $article->Obj-;
 		$i++;
 	}	

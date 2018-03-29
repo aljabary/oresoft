@@ -8,6 +8,11 @@
 Get the user agent informastion http request
 this class access is closed for plugins app, used only by core engine
 */
+namespace Prox\Engine;
+use Prox\System\Permission;
+use Prox\Plugins\Core;
+use Prox\Engine\User;
+use MD5Crypt;
 class UserAgent{
 	public $bc;
 	private $is_mo 	=	false;
@@ -128,9 +133,9 @@ function getBrowser()
  } 
 
  function detect(){
-	$pc = new Plugins_Core();
+	$pc = new Core();
 	$pc->UseLib("Mobile_Detect");	//load mobile detect Library
-	$md = new Mobile_Detect();
+	$md = new \Mobile_Detect();
 	if($md->isTablet()){
 		foreach ($md->getRules() as $_regex) {
             if (empty($_regex)) { continue; }
@@ -248,8 +253,8 @@ function getBrowser()
 
  }
 function getSession($page_id,$pagetype){
-	$db	=	new DB(PERMISSION);
-	$con = $db->connect();
+	
+	$con = Xcon(PERMISSION);
 	$md 	=	new MD5Crypt();
 	$today 	= 	date('Y-m-d H:i:s');
 	if(empty($_COOKIE['visitor']) || $_COOKIE['visitor']==''){	//crete new session user
@@ -280,7 +285,7 @@ function getSession($page_id,$pagetype){
 *	@param int $pxs			: pxsession id
 */
 function setVisitorCounter($page_id,$pagetype,$pxs){
-	$con = Xcon();
+	$con = Xcon(PERMISSION);
 	$dt 	= 	date('Y-m-d');
 	/**
 	*	check record today for page and page (object) id

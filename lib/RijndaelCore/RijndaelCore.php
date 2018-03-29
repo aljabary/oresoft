@@ -43,27 +43,29 @@ class RijndaelCore
      */
     public function encrypt($plaintext)
     {
-		$ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
-		$iv = openssl_random_pseudo_bytes($ivlen);
-		$ciphertext_raw = openssl_encrypt($plaintext, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
-		$hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
-		$ciphertext = base64_encode( $iv.$hmac.$ciphertext_raw );
-		return $ciphertex;
+        $length = (ini_get('mbstring.func_overload') & 2) ? mb_strlen($plaintext, ini_get('default_charset')) : strlen($plaintext);
+
+        if ($length >= 1048576) {
+            return false;
+        }
+        return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->_key, $plaintext, MCRYPT_MODE_ECB, $this->_iv)).sprintf('%06d', $length);
     }
 
     public function decrypt($ciphertext)
     {
-        
-		$c = base64_decode($ciphertext);
-		$ivlen = openssl_cipher_iv_length($cipher="AES-128-CBC");
-		$iv = substr($c, 0, $ivlen);
-		$hmac = substr($c, $ivlen, $sha2len=32);
-		$ciphertext_raw = substr($c, $ivlen+$sha2len);
-		$original_plaintext = openssl_decrypt($ciphertext_raw, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
-		$calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
-		if (hash_equals($hmac, $calcmac))//PHP 5.6+ timing attack safe comparison
-		{
-			echo $original_plaintext."\n";
-		}
+        if (ini_get('mbstring.func_overload') & 2) {
+            $length = intval(mb_substr($ciphertext, -6, 6, ini_get('default_charset')));
+            $ciphertext = mb_substr($ciphertext, 0, -6, ini_get('default_charset'));
+            return mb_substr(
+                mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->_key, base64_decode($ciphertext), MCRYPT_MODE_ECB, $this->_iv),
+                0,
+                $length,
+                ini_get('default_charset')
+            );
+        } else {
+            $length = intval(substr($ciphertext, -6));
+            $ciphertext = substr($ciphertext, 0, -6);
+            return substr(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->_key, base64_decode($ciphertext), MCRYPT_MODE_ECB, $this->_iv), 0, $length);
+        }
     }
 }

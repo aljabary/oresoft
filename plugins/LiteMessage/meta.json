@@ -7,6 +7,7 @@
 "description":"Create and Read message",
 "permission":["MESSAGE","USER.READ"],
 "logo":"logo.png",
+"local_api":"open",
 "target_version":"0.1.0",
 "developer":{
 "name":"RockBurst Digital 5419",

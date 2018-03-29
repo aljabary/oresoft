@@ -8,6 +8,9 @@ LitePageManager  v.2.1.1
 namespace LitePageManager;
 use Prox\Engine\Site;
 use Prox\Plugins\Manager_Plug_handler;
+use Prox\Engine\Page;
+use Prox\Engine\Category;
+use Prox\Engine\User;
 class MainClass extends Manager_Plug_handler{
 public $arguments;
 public $lcparam;
@@ -51,7 +54,7 @@ function create_menu($arg,$param,$hook){
 	* on LitePageManager route
 	*/
 	if($hook =='Header_Meta' && $arg=='Backend' && $param[1]=='LitePageManager'){
-		$bb 	= new BlogBooster($this->arguments, $this->lcparam);
+		$bb 	= new \BlogBooster\MainClass($this->arguments, $this->lcparam);
 		$bb->TinymceLib();
 		echo $bb->getCss();
 		//$this->scriptListView()
@@ -64,11 +67,12 @@ function create_menu($arg,$param,$hook){
 	}		
 }
 function submit(){
-	$page				=	new Page($_POST['editid'],$this);	
+	$pc				=	new Page($this,$_POST['editid']);
+	$page				=	$pc->Obj[0];
 	$page->content		=	$_POST['bc_editor_lpm_editor'];
 	$page->description	=	$_POST['lpm_desc'];
 	$page->keyword		=	$_POST['lpm_keyword'];
-	$pc = new Page_Core($this);
+	
 	$pc->Update($page, new User(), true);
 	$obj = array("id"=>$page->id,"url"=>$page->url);
 	$data = array("response"=>200, "page"=>$obj);
@@ -98,13 +102,14 @@ public function create_menu_admin(){
 }
 function view($param,$hook){
 	if($hook!='Admin_Menu' && $hook!='Admin_Headericon'){	
-	$pc 	= new Page_Core($this);
-	$page 	= new Page($param[3]);
-	$cc 	= new Category_Core($this);
+	$pc 	= new Page($this);
+	$pc->gen($param[3]);
+	$page 	= $pc->Obj[0];
+	$cc 	= new Category($this);
 	$catlist=	$cc->getlist("all",0,100, 'desc');
 	$this->Need("LiteCat","Lite Category", "1.0.0");
 	$lcparam= array_merge($param, array('this'=>$this));
-	$lc = new LiteCat($this->arguments, $lcparam);
+	$lc = new \LiteCat\MainClass($this->arguments, $lcparam);
 	try {
 	$tree	= $pc->getlist("all",0,10);
 	} catch (PxException $e) {      // Permission Exception
@@ -122,12 +127,13 @@ function view($param,$hook){
 }
 function editor($param,$hook){
 	if($hook!='Admin_Menu' && $hook!='Admin_Headericon'){	
-	$pc 	= new Page_Core($this);
-	$page 	= new Page($param[3]);
-	$cc 	= new Category_Core($this);
+	$pc 	= new Page($this);
+	$pc->gen($param[3]);
+	$page 	= $pc->Obj[0];
+	$cc 	= new Category($this);
 	$catlist=	$cc->getlist("all",0,100, 'desc');
 	$this->Need("BlogBooster","Blog Booster", "1.0.0");
-	$lc 	= new BlogBooster($this->arguments, $this->lcparam);
+	$lc 	= new \BlogBooster\MainClass($this->arguments, $this->lcparam);
 	try {
 	$tree	= $pc->getlist("all",0,100);
 	} catch (PxException $e) {      // Permission Exception
@@ -140,15 +146,15 @@ function editor($param,$hook){
 }
 function listview($param,$hook){
 	if($hook!='Admin_Menu' && $hook!='Admin_Headericon'){	
-	$ac = new Page_Core($this);
-	$pi=0;
-	if($param[3] > 0){
-	$pi = $param[3]-1;
-	}
-	$curpg[$pi] = 'class="active"';
-	$data 	= array('page_list'=>$ac->getList('all',$pi, 20),
-	'pg'=>$pi, 'curpg'=>$curpg);
-	$this->View->Show("list",$data);
+		$ac = new Page($this);
+		$pi=0;
+		if($param[3] > 0){
+		$pi = $param[3]-1;
+		}
+		$curpg[$pi] = 'class="active"';
+		$data 	= array('page_list'=>$ac->getList('all',$pi, 20),
+		'pg'=>$pi, 'curpg'=>$curpg);
+		$this->View->Show("list",$data);
 	}
 }
 	
@@ -169,15 +175,14 @@ function backend($param,$hook){
 }
 
 function removeArt(){
-	$art 	= new Page(addslashes($_GET['page']));
-	$ac 	= new Page_Core($this);
-	$ac->Remove($art,new User(), true);
+	$art 	= new Page($this,addslashes($_GET['page']));
+	$art->Remove($art->Obj[0],new User(), true);
 }
 function setStatus(){
-	$art 	= new Page(addslashes($_GET['page']));
+	$ac 	= new Page($this,addslashes($_GET['page']));
+	$art 	= $ac->Obj[0];
 	$stat 	= $_GET['status'];
 	$art->status = $stat;
-	$ac 	= new Page_Core($this);
 	$ac->Update($art,new User(), true);	
 }
 
@@ -192,7 +197,7 @@ function setStatus(id){
 	}
 	$.ajax({
 		url:base_url+"ajax.php",
-		data:"class=LitePageManager&plugins=1&function=setStatus&page="+id+"&status="+nst,
+		data:"class=LitePageManager.MainClass&plugins=1&function=setStatus&page="+id+"&status="+nst,
 		success:function(){
 			if(st=="on"){
 		$("#art"+id).html("Off");$("#art"+id).attr("stat","off");$("#art"+id).removeClass("btn-success");$("#art"+id).addClass("btn-warning");
@@ -205,7 +210,7 @@ function setStatus(id){
 function deleteArt(id){
 	$.ajax({
 		url:base_url+"ajax.php",
-		data:"class=LitePageManager&plugins=1&function=removeArt&page="+id,
+		data:"class=LitePageManager.MainClass&plugins=1&function=removeArt&page="+id,
 		success:function(){			
 		$("#al"+id).remove();
 		}
@@ -309,7 +314,7 @@ function addnew(){
 	$slug		= $_POST['lpm_slug'];
 	$catid		= $_POST['lpm_category'];
 	$type		= $_POST['lpm_tp'];
-	$pc = new Page_Core($this);	
+	$pc = new Page($this);	
 	try {
 		
 		if($edit_id <1){
@@ -319,11 +324,13 @@ function addnew(){
 			);
 			$res = $pc->Create($page,  new User());
 		}else{ 
-		$page 			= new Page($edit_id);
+		$pc->gen($edit_id);
+		$page 			= $pc->Obj[0];
 		$page->name 	= $name;
 		$page->slug 	= $slug;
 		$page->type 	= $type;
-		$page->Category = new Category($catid);
+		$cat 			=	new Category($this,$catid);
+		$page->Category = $cat->Obj[0];
 		$res 			= $pc->Update($page, new User(), true);
 		}
 		$mres='error';
@@ -337,14 +344,16 @@ function addnew(){
 }
 
 function updateparent(){
-	$pc 	= new Page_Core($this);
+	$pc 	= new Page($this);
 	$id 	= $_GET['child'];
-	$pid	= $_GET['parent'];	
-	$pg 	= new Page($id);
-	$parent 	= new Page($pid);
+	$pid	= $_GET['parent'];
+	$pc->gen($id);
+	$pc->gen($pid);
+	$pg 	= $pc->Obj[0];
+	$parent 	= $pc->Obj[1];
 	$pg->parent = $parent;
 	$co = $pc->update($pg, new User, true);
-	print_r($co);
+	//print_r($co);
 }
 
 function isSelected($id,$article){

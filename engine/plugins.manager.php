@@ -33,7 +33,7 @@ function __construct($rt,$pc,$bc){
 		}
 		//$this->trigger('tools','Backend',$rt);	
 		if($this->type !='tools'){		
-		$this->init($this->type); 
+//$this->init($this->type); 
 		}
 		//$this->trigger($this->type,'Backend',$rt);
 		$pl   		  = $this->plugins[$this->type];
@@ -46,7 +46,7 @@ function __construct($rt,$pc,$bc){
 		}
 		if(!empty($bc)){
 		$param 			= array_merge($this->routing,array("this"=>"PERMISSION"));
-		$namespace 	=	$base_class.'\MainClass';
+		$namespace 	=	'\\'.$base_class.'\MainClass';
 		$this->plug = new $namespace('Backend',$param);
 		}
 				
@@ -61,7 +61,8 @@ function show(){
 function showPluginsList(){
 	$site 	= new Site();
 	$user	= new User();
-	$plugins_arg = 'Plugins';$PXargs='Plugins';
+	$plugins_arg = 'Plugins';
+	$PXargs='Plugins';
 	$view_title= BCL('px','apps').' - '.BCL('px','apps_sub');
 	$pg 	=	$_GET['page'];
 	/***pagination ***/
@@ -71,7 +72,7 @@ function showPluginsList(){
 	include(PROX_Domain.'/temp/plugins.list.php');
 }
 function getAllplugins(){
-		$con	=	Xcon();
+		$con	=	Xcon(PERMISSION);
 		$data 	=	array();$i=0;
 		$pg 	=	$_GET['page'];
 		if($pg <2){
@@ -191,7 +192,7 @@ function license_cb($result,$cbtp){
 		$version= $this->plug->Meta->version;
 		$dt 	= date('Y-m-d-H-i-s');		
 		$md 	= new MD5Crypt();
-		$sign 	= $md->encrypt($dt,$_SERVER["SERVER_NAME"]);
+		$sign 	= $md->encrypt($dt.'_'.$name,$_SERVER["SERVER_NAME"]);
 		  mysqli_query($con,"insert into plugins (name,p_type,base_class,version,signature) values ('$name','$ptype','$base_class','$version','$sign')");
 		  $per 	= $this->plug->Meta->permission;
 		   for($i=0;$i<count($per);$i++){

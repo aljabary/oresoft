@@ -9,6 +9,7 @@ This class load, handling plugins and routing
 namespace Prox\Plugins;
 use Prox\User;
 use Prox\System\Site;
+use Prox\System\DB;
 class Apps extends Core{
 	
 function showPluginsList(){
@@ -21,8 +22,8 @@ function showPluginsList(){
 function setStatus(){
 		$pid 	= $_GET['plugins'];
 		$stat 	= $_GET['status'];
-		$db 	= new DB(PERMISSION);
-		$q = mysqli_query($db->connect(),"select * from plugins where id ='$pid'");
+		$db 	= Xcon(PERMISSION);
+		$q = mysqli_query($db,"select * from plugins where id ='$pid'");
 		while($g = mysqli_fetch_array($q)){
 			$pn = str_replace(' ','-',$g['base_class']);
 			$pn = $pn;
@@ -32,27 +33,28 @@ function setStatus(){
 			}
 			parent::setFolPn($fol,$pn);
 			$file = PROX_Domain.'/'.$fol.'/'.$g['base_class'].'/init.php';
-			if(is_file($file) && !class_exists($g['base_class'])){include(PROX_Domain.'/'.$fol.'/'.$g['base_class'].'/init.php');
+			if(is_file($file) && !class_exists('\\'.$g['base_class'].'\MainClass')){include(PROX_Domain.'/'.$fol.'/'.$g['base_class'].'/init.php');
 			}
 		$param 			= array("this"=>"PERMISSION");
+		$pn = '\\'.$pn.'\MainClass';
 		$plug 			= new $pn(null,$param);
 		}
 		$mv = $plug->View->getKeystore();
 		if($mv->price > 0 && $plug->isLicensed()){
 			if($fol	!='theme_perfthm'){
-			mysqli_query($db->connect(),"update plugins set status='$stat' where id ='$pid'");
+			mysqli_query($db,"update plugins set status='$stat' where id ='$pid'");
 			}else if($stat > 0){
-				mysqli_query($db->connect(),"update plugins set status='$stat' where id ='$pid'");
-					mysqli_query($db->connect(),"update site set theme='$pn'");
+				mysqli_query($db,"update plugins set status='$stat' where id ='$pid'");
+					mysqli_query($db,"update site set theme='$pn'");
 			}
 		}
 		if($mv->price ==0){
 			if($fol!='theme_perfthm'){
-		mysqli_query($db->connect(),"update plugins set status='$stat' where id ='$pid'");
+		mysqli_query($db,"update plugins set status='$stat' where id ='$pid'");
 			}else if($stat > 0){
 				
-				mysqli_query($db->connect(),"update plugins set status='$stat' where id ='$pid'");
-				mysqli_query($db->connect(),"update site set theme='$pn'");
+				mysqli_query($db,"update plugins set status='$stat' where id ='$pid'");
+				mysqli_query($db,"update site set theme='$pn'");
 			}
 		}
 }
@@ -158,7 +160,7 @@ function do_activated(){
 	$metatype	=	$_POST['metatype'];
 	$act		=	$_POST['act'];
 	$key		=	$_POST['keyp'];
-	$db 		= 	Xcon();
+	$db 		= 	Xcon(PERMISSION);
 	
 		mysqli_query($db,"update plugins set key_product='$key' where base_class='$cb'");
 		$q 			= mysqli_query($db,"select * from plugins where base_class ='$cb'");
@@ -182,7 +184,7 @@ function do_activated(){
 		}
 		if($act>0 && $plug->isLicensed()){
 			//valid
-			mysqli_query($db->connect(),"update plugins set status='1' where base_class='$cb'");
+			mysqli_query($db,"update plugins set status='1' where base_class='$cb'");
 			$res = $install->onActivation(true);
 			if(!$res){
 				header("location:".PROX_URL_ADMIN."/plugins/?bc=".$cb."&metatype=".$metatype."&status=success_install"."&package=".$_GET['package']."&space=".$_GET['space']);

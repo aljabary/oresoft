@@ -9,7 +9,9 @@ namespace BlogBooster;
 use Prox\System\Site;
 use Prox\Plugins\Manager_Plug_handler;
 use Prox\Engine\Article;
+use Prox\Engine\Photo;
 use Prox\Engine\User;
+use Prox\Engine\Category;
 
 class MainClass extends Manager_Plug_handler{
 public $arguments;	
@@ -55,7 +57,7 @@ function submit(){
 	$cat		= $_POST['bc_cat'];
 	$isedit		= $_POST['editid'];
 	$photo		= new Photo($photoid);
-	$ac 		= new Article_Core($this);
+	$ac 		= new Article($this);
 	$tags 		=	explode(',',$tag);
 	$cats 		=	explode(',',$cat);
 	$article 	=	array(
@@ -68,21 +70,25 @@ function submit(){
 	
 	if($isedit < 1){
 	$id 	=	$ac->Create($article, new User());
-	$article = new Article($id);
+	$ac->gen($id);
+	$article = $ac->Obj[0];
 	$obj = array("id"=>$article->id, "url"=>$article->url); 
 	http_response_code(200);
 	$res = array("response"=>200, "article"=>$obj);
 	
 	}else if($isedit > 0){
-	$article = new Article($isedit);
+	$ac->gen($isedit);
+	$article = $ac->Obj[0];
 	$article->title 	= $title;
 	$article->content 	= $content;
 	$article->headline 	= $headline;
 	$article->keyword 	= $keyword;
 	$article->Photo 	= $photo;
+	$cc					=	new Category($this);
 	for($i=0;$i<count($cats);$i++){
-		$article->Category[$i] = new Category($cats[$i]);
+		$cc->gen($cats[$i]);
 	}
+	$article->Category	=	$cc->Obj;
 	$article->tags = $tags;
 	$obj = array("id"=>$article->id, "url"=>$article->url); 
 	$ac->Update($article, new User(), true);	
@@ -127,22 +133,23 @@ function editor($param,$hook, $Lc){
 		/**
 		* we use LiteCat API for our plugins
 		*/
-	$data 	= array("lc"=>$Lc,"args"=>$this->arguments,"param"=>$param, 'article'=>$this->article->Obj[0]);
-	$this->View->Show("editor",$data);
+		$data 	= array("lc"=>$Lc,"args"=>$this->arguments,"param"=>$param, 'article'=>$this->article->Obj[0]);
+		$this->View->Show("editor",$data);
 	}
 }
 function listpage($param,$hook){
 	if($hook!='Admin_Menu' && $hook!='Admin_Headericon'){	
-	$ac = new Article($this);
-	$pi=0;
-	if($param[3] > 0){
-	$pi = $param[3]-1;
-	}
-	$al 	=	$ac->getList('all',$pi, 10);
-	$curpg[$pi] = 'class="active"';
-	$data 	= array('article_list'=>$al,
-	'pg'=>$pi, 'curpg'=>$curpg);
-	$this->View->Show("list",$data);
+		$ac 	= new Article($this);
+		$pi		= 0;//page index
+		if($param[3] > 0){
+			$pi = $param[3]-1;
+		}
+		$al 		= $ac->getList('all',$pi, 10);
+		$curpg[$pi] = 'class="active"';
+		$data 		= array('article_list'	=>$al,
+							'pg'			=>$pi, 
+							'curpg'			=>$curpg);
+		$this->View->Show("list",$data);
 	}
 }
 function scriptController($param){
@@ -266,7 +273,7 @@ function loadscriptEditor(){
  
 	$('#atags').tagsInput({
 		width: 'auto',
-		autocomplete_url:'".PROX_URL."ajax.php?class=BlogBooster&function=data&plugins=1',
+		autocomplete_url:'".PROX_URL."ajax.php?class=BlogBooster.MainClass&function=data&plugins=1',
 	});
 	$('#akeyword').tagsInput({
 		width: 'auto',
@@ -367,7 +374,7 @@ function loadscriptEditor(){
 function data(){
 	$q 	= $_GET['term'];
 	$list = '[';
-	$ac = new Article_Core($this);
+	$ac = new Article($this);
 	$res = $ac->searchTags('%'.$q.'%');
 	for($i=0;$i<count($res);$i++){
 		$data = $res[$i];

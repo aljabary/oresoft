@@ -12,6 +12,7 @@ Category v.1.0.0
 * data-tempa = LitePageManager-Editor : Base Class-Template hook name
 */
 $page = $data['page'];
+echo $data['lc']->getCss();
 ?>
  <div class="panel widget" id="LitePageManager" data-temp="LitePageManager-Editor">
                   <div class="panel-heading vd_bg-red">
@@ -39,7 +40,7 @@ $page = $data['page'];
 </div>
                   
 <form id="cateditor" action="<?php echo PROX_URL.'ajax.php'; ?>" method="post">	
-<input type="hidden" name="class" value="LitePageManager"/>	
+<input type="hidden" name="class" value="LitePageManager\MainClass"/>	
 <input type="hidden" name="function" value="addnew"/>	
 <input type="hidden" name="plugins" value="1" />	
 <input type="hidden" name="editid" id="edit_id"/>	
@@ -94,8 +95,8 @@ for($icl=0;$icl<count($catlist);$icl++){
 var lpm_page =[];
 <?php
 $CL = $data['tree'];
- for($i=0;$i<count($CL);$i++){
-				$cat = $CL[$i];
+ foreach($CL as $cat){
+				//$cat = $CL[$i];
 			echo 'lpm_page['.$cat->id.']={name:"'.$cat->name.'",slug:"'.$cat->slug.'",pagetype:"'.$cat->type.'",category:"'.$cat->Category->name.'",cat_id:"'.$cat->Category->id.'"};';
 }
 				?>
@@ -143,7 +144,7 @@ setparent:function(){
 	}
 	$.ajax({
 		url:"<?php echo PROX_URL;?>ajax.php",
-		data: "class=LitePageManager&function=updateparent&plugins=1&parent="+par+"&child="+tau.child.li_attr.catid,
+		data: "class=LitePageManager.MainClass&function=updateparent&plugins=1&parent="+par+"&child="+tau.child.li_attr.catid,
 	});
 },
 

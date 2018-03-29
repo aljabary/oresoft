@@ -9,6 +9,11 @@ namespace LiteTheme;
 use Prox\System\Site;
 use Prox\Engine\Article\Core;
 use Prox\Plugins\Theme;
+use Prox\Engine\User;
+use Prox\Engine\Comment;
+use Prox\Engine\Notification;
+use Prox\Engine\Article;
+use Prox\Engine\Admin;
 class MainClass extends Theme{
 private $lvl=1;
 public $LThome;
@@ -129,9 +134,10 @@ public function sendComment(){
 	$comment= addslashes($_POST['comment']);
 	$article= addslashes($_POST['article']);	
 	$user 	=	new User();
-	$cc 	=	new Comment_Core($this);
-	$not 	=	new Notification_Core($this);
-	$art = new Article($article);
+	$cc 	=	new Comment($this);
+	$not 	=	new Notification($this);
+	$ac = new Article($this,$article);
+	$art	=	$ac->Obj[0];
 	if($user->id > 0){		//if session user
 		$comments	=	array('content'=>$comment,
 		'object'=>$article,	'otype'=>'article'	
@@ -149,7 +155,7 @@ public function sendComment(){
 		);
 		$com_id = $cc->Create($comments, $user);
 	}
-	$ac = new Admin_Core($this);
+	$ac = new   Admin\Core($this);
 	$adm	= 	$ac->getAllAdmin(ADM_SUPER); //get admin list
 	$notData = array(
 	'title'=>$user->name.' '.BCL('LiteTheme','not_title'). ' '.BCL('LiteTheme','ur_article'),

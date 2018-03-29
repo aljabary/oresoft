@@ -23,7 +23,7 @@ class Core{
 	Load source of plugins, load all class where includes from plugins
 	this method always call when controller proccessing
 	**/
-function init($p_type){
+function init($p_type){//Xlog("select * from plugins where status='1'");
 		$this->site = new Site();
 		$db 	= Xcon(PERMISSION);		
 		$q	= mysqli_query($db,"select * from plugins where status='1' ");
@@ -36,7 +36,7 @@ function init($p_type){
 					$this->fol ='theme_perfthm';
 				}
 				$file = PROX_Domain.'/'.$this->fol.'/'.$g['base_class'].'/init.php';
-				if(is_file($file) ){
+				if(is_file($file)){
 					include(PROX_Domain.'/'.$this->fol.'/'.$g['base_class'].'/init.php');
 				}
 			}
@@ -128,12 +128,12 @@ public function call_action($p_type,$arg,$param, $hook, $i=0){
 		$q	= mysqli_query($db,"SELECT * FROM plugins_hook inner JOIN plugins on plugins_hook.base_class=plugins.base_class 
 		where plugins.status='1' and plugins_hook.hook='$hook' $iparam order by ix desc");
 		while($g = mysqli_fetch_array($q)){
-		$base_class 	= $g['base_class'];
-		$param 			= array_merge($param,array("this"=>"PERMISSION"));
-		$namespace 		=	$base_class.'\MainClass';
-		$plug 			= new $namespace($arg,$param);
-		$rtm 			= array_merge($param,array('template'=>$g['template']));
-		$plug->main($arg,$rtm,$hook);	
+			$base_class 	= $g['base_class'];
+			$param 			= array_merge($param,array("this"=>PERMISSION));
+			$namespace 		=	$base_class.'\MainClass';
+			$plug 			= new $namespace($arg,$param);
+			$rtm 			= array_merge($param,array('template'=>$g['template']));
+			$plug->main($arg,$rtm,$hook);	
 		}	
 		
 }
@@ -185,7 +185,7 @@ class Manager_Plug_handler {
 	public $Permissions = array(); 	
 	public function DB($bc){
 		$b = new DB($bc);
-		return Xcon();
+		return Xcon($bc);
 	}
 	
 	public function __construct($bc,$param){
@@ -215,17 +215,17 @@ class Manager_Plug_handler {
 			$fn 				=	PROX_Domain.'/theme_perfthm/'.$this->Base_Class.'/meta.json';
 			$this->Base_Dir		=	PROX_Domain.'/theme_perfthm/'.$this->Base_Class.'/'; 
 			if(is_file($fn)){
-				$meta 				=	file_get_contents(PROX_Domain.'/theme_perfthm/'.$this->Base_Class.'/meta.json');
-				$this->Meta			=	json_decode($meta);	
+				$meta 			=	file_get_contents(PROX_Domain.'/theme_perfthm/'.$this->Base_Class.'/meta.json');
+				$this->Meta		=	json_decode($meta);	
 			}else
-				{
+			{
 				throw new PxException(BCL('px','ex_meta'), 11);		
-				}		
-		}
-		if($param['this'] !="PERMISSION" && $this->Meta->local_api=="open"){
+			}		
+		}//Xlog($bc);
+		if($param['this'] !=PERMISSION && $this->Meta->local_api=="open"){
 			$this->App 		=	$param['this'];
-		}else{ if($param['this'] !="PERMISSION" && $this->Meta->local_api !="open")
-			throw new PxException(BCL('px','ex_app_local_api'), 12);
+		}else if($param['this'] !=PERMISSION && $this->Meta->local_api !="open"){
+		Xlog($param['this']);	throw new PxException(BCL('px','ex_app_local_api'), 12);
 		}
 		
 		$q	= mysqli_query(Xcon(PERMISSION),"select * from plugins where base_class = '$this->Base_Class'");
@@ -249,23 +249,23 @@ class Manager_Plug_handler {
 }
 public function  isLicensed(){
 		$md 	= new MD5Crypt();
-		$d 		= $md->decrypt($this->signature,$_SERVER["SERVER_NAME"]);
-		$this->UseLib('RijndaelCore');
-		$dec 	= str_replace('_','',$d);
+		$d 		= $md->decrypt($this->signature,$_SERVER["SERVER_NAME"]); //dt
+		//$this->UseLib('RijndaelCore');
+		$dec 	= str_replace('-','',$d);
 		//$kp = explode('||',$this->keyproduct);//20170314110911
 		$param 	= $dec.'proxtrasofttechnologyinc';
-		$param 	= substr($param,0,24);
-		$rij 	= new RijndaelCore($param,$_SERVER["SERVER_NAME"]);
-		$key 	= $rij->decrypt($this->keyproduct);
-		$dkey 	= $md->decrypt($key,$_SERVER["SERVER_NAME"]);
-		if($d	==	$dkey){
+		//$param 	= substr($param,0,24);
+		//$rij 	= new RijndaelCore($param,$_SERVER["SERVER_NAME"]);
+		$key 	= $md->decrypt($this->keyproduct,$param);
+		//$dkey 	= $md->decrypt($key,$_SERVER["SERVER_NAME"]);
+		if($dec	==	$key){
 			return true;
 		}else{
 			return false;
 		}		
 } 
 public function UseLib($libname,$ns=''){
-		$pc = new Plugins_Core();
+		$pc = new Core();
 		$pc->UseLib($libname,$ns);
 }
 function addHook($temp,$hook,$i=0){

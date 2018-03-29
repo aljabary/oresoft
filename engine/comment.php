@@ -6,14 +6,21 @@
 @author		: Abu Zidane Asadudin Shakir Al-Jabary
 This class handling Comment processing data, insert, update, delete
 **/
-class Comment_Core{
+namespace Prox\Engine;
+use Prox\Engine\Comment\Core;
+use Prox\System\Permission;
+use Prox\Engine\Article;
+class Comment extends Core{
 	private $permission;
+	private $BC;
 	/**
 	initialize permission for plugins
 	*/
-function __construct(/*Plugins Base_Class*/ $bc){	
-		$this->permission 	= new Permission($bc);
-		}	
+function __construct(/*Plugins Base_Class*/ $bc,$id=0){
+	parent::__construct($bc,$id);
+	$this->BC = $bc;	
+	$this->permission 	= new Permission($bc);
+}	
 /**
 * Create new instance an Comment
 * @param Array data
@@ -22,7 +29,7 @@ function __construct(/*Plugins Base_Class*/ $bc){
 */
 function Create($data,  $user){
 	$this->permission->validate('COMMENT', 'WRITE', 22); //required permission
-	$con 		=	 Xcon();
+	$con 		=	 Xcon(PERMISSION);
 	//print_r($data);
 	$obj 		=	addslashes($data['object']);
 	$content	=	addslashes($data['content']);
@@ -108,8 +115,8 @@ function Remove($article, $user, $byother = false){
 function getList($status,$type, $objid=0, $st, $nd){
 	$this->permission->validate('COMMENT', 'READ', 23); //required permission
 	$status = addslashes($status);
-	$db 	= Xcon();
-	$data 	= array(); $i=0;
+	$db 	= Xcon(PERMISSION);
+	$this->Obj 	= array(); 
 	$ix 	= 0;
 	if($st >0){
 		$ix =$nd*$st;
@@ -133,11 +140,9 @@ function getList($status,$type, $objid=0, $st, $nd){
 	
 	$q = mysqli_query($db,"select * from comment $stat $qtype $qobj order by comment_id desc limit $ix,$nd");
 	while($g = mysqli_fetch_array($q)){
-		$com = new Comment($g['comment_id']);		
-		$data[$i] = $com;
-		$i++;
+		$this->gen($g);
 	}	
-	return $data;
+	return $this->Obj;
 }
 
 /**
@@ -148,9 +153,9 @@ function getList($status,$type, $objid=0, $st, $nd){
 */
 function getListByDate($range,$to, $status='on'){
 	$this->permission->validate('ARTICLE', 'READ', 13); //required permission
-	$db 	=	Xcon();
+	$db 	=	Xcon(PERMISSION);
 	$status = addslashes($status);
-	$data 	= array(); $i=0;
+	$this->Obj 	= array(); $i=0;
 	$ix 	= 0;
 	if($st >0){
 		$ix =$nd*$st;
@@ -158,13 +163,12 @@ function getListByDate($range,$to, $status='on'){
 	if($status !='all'){
 		$stat = " and status='$status'";
 	}
+	$ac = new Article($this->BC);	
 	$q = mysqli_query($db,"select * from article where dt >'$range' and dt < '$to' $stat order by id desc");
 	while($g = mysqli_fetch_array($q)){
-		$article = new Article($g['id']);		
-		$data[$i] = $article;
-		$i++;
+		$ac->gen($g);
 	}	
-	return $data;
+	return $this->Obj;
 	
 }
 }//

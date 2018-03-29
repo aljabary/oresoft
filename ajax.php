@@ -1,6 +1,5 @@
-<?php session_start();header('Access-Control-Allow-Origin: *');
-//ini_set('session.cookie_domain', '.sellupbooster.com');session_set_cookie_params(0,"/",".sellupbooster.com");
-error_reporting(3);
+<?php session_start();error_reporting(4);//header('Access-Control-Allow-Origin: *');session_set_cookie_params(0,"/",".yourdomain.com");
+
 set_time_limit(300);
  /*** define the site path **/
 include 'includes/baseurl.php';

@@ -1,4 +1,4 @@
- <?php $site = new Site();
+ <?php $site = $data['site'];
 $Me->showHook($data['args'],$data['param'],'Body_After',0); ?> 
 <!-- Footer Start -->
   <footer class="footer-2"  id="footer">      
@@ -12,12 +12,12 @@ $Me->showHook($data['args'],$data['param'],'Body_After',0); ?>
                     <a href="<?php echo $data['twitter'];?>" target="_blank" class="btn vd_btn vd_bg-twitter vd_round-btn btn-sm mgr-10"><i class="fa fa-twitter fa-fw "></i></a>                    
                 </div>              
                 <div class="copyright text-center">
-                	<p><span class="mgr-10">795 Folsom Ave, Suite 600</span><span class="mgr-10">-</span><span class="mgr-10">San Francisco, CA 94107</span><br/> 
-                    P: (123) 456-7890 
+                	<p><span class="mgr-10">Powered by Oresoft</span><br/> 
+                    RockBusrt Digital Network
                     </p>
 					<p> <?php 
 $Me->showHook($data['args'],$data['param'],'Footer',0); ?> </p>
-                  	Copyright &copy; <?php echo date('Y').' '.$site->name;?>. All Rights Reserved Powered by RockBusrt Digital 5419
+                  	Copyright &copy; <?php echo date('Y').' '.$site->name;?>. All Rights Reserved
                 </div>
               </div>
             </div><!-- row -->

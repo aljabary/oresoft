@@ -9,6 +9,7 @@ This controller for backend
 use Prox\Plugins\Core;
 use Prox\Plugins\Plugins_Manager;
 use Prox\DB;
+use Prox\Plugins\Apps;
 class Plugins_Controller extends baseController {
 
 public function index() 
@@ -23,7 +24,7 @@ public function index()
 	$pm->show();
 	}else{
 		//$app	=	new Apps();
-		$app 	=	new Plugins_Manager($rt,$pc,'Apps');
+		$app 	=	new Plugins_Manager($rt,$pc,'');
 		$app->showPluginsList();
 	}
 
@@ -44,7 +45,7 @@ function info(){
 	$this->checklogin();
 	$rt 	=	explode('/',ROUTING); 	//routing
 	$pc 	=	new Core();
-	$pc->init('tools'); 					//load class source of plugins's type tools
+	//$pc->init('tools'); 					//load class source of plugins's type tools
 	$bc		= $rt[2];
 	$app 	=	new Plugins_Manager($rt,$pc,$bc);
 	$app->showPluginsInfo();
@@ -53,7 +54,7 @@ function info(){
 function setting(){
 	$this->checklogin();
 	$rt 	=	explode('/',ROUTING); 	//routing
-	$pc 	=	new Core(new DB(PERMISSION));
+	$pc 	=	new Core();
 	$pc->init('tools'); 					//load class source of plugins's type tools
 	$bc		= $rt[2];
 	$app 	=	new Plugins_Manager($rt,$pc,$bc);
@@ -126,26 +127,55 @@ function uninstall(){
 	$app->uninstall($base_class,$fol);
 }
 function tes(){
-	$pcore = new Core(new Prox\System\DB(PERMISSION));
+	//membuat keystore
+	$pcore = new Core(); 
 					$pcore->UseLib('RijndaelCore');
 					$rij = new RijndaelCore('proxtrasofttechnologyinc','sellupbooster');
-					$js ='{"name":"Lite Message",
-"base_class":"LiteMessage",
+					$js ='{
+"name":"Lite Theme",
+"base_class":"LiteTheme",
 "version":"1.0.0",
-"type":"tools",
+"permission":["MEDIA","ARTICLE.READ","CATEGORY.READ","MESSAGE","COMMENT","USER"],
+"logo":"ab.png",
+
+"type":"theme",
+"info":"{$this->url}temp/about.txt",
+"description":"Create and Read message",
+"target_version":"0.1.0",
 "developer":{
 "name":"RockBurst Digital 5419",
 "url":"http://sellupbooster.com",
-"email":"official@sellupbooster.com"
-},"price":0}';
-					$ecr= $rij->encrypt($js);
-					echo $ecr;//.'<br><br>';
-					//$ecrs = nl2br($ecr);//echo $ecrs;
+"email":"official@sellupbooster.com",
+"email":"official@sellupbooster.com",
+"address":"Jl Cileungsi - Jonggol KM 11",
+"contact":"+62 857 8196 5049"
+},
+"license":"../license.txt",
+"price":0
+}';
+					$md = new MD5crypt();
+					$keystore= $md->encrypt($js,'proxtrasofttechnologyinc');
+					Xlog($keystore);
+					$dt 	= date('Y-m-d-H-i-s');
+					$sign 	= $md->encrypt($dt.'_User Management',$_SERVER["SERVER_NAME"]);
 					
-					$json= $rij->decrypt($ecr);
+					//Xlog($sign);
+					/*$signt = 'UGRUNABpUj9Vf1g3B2YCKwBmV24EewgxB2dcJAppU2sMJwhoUTBWXFEDAS1QZ1YgUCQHR1JhDWoENgY0VWYCYVAzVGoALA==';
+					//echo $dt;
+					echo $md->decrypt($signt,'proxtrasofttechnologyinc').'<br>';
 					
-					$meta = json_decode($json);
+					$kp = $this->createkeyproduct($signt,$_SERVER["SERVER_NAME"]);
+					Xlog($kp);*/
 					
+					
+}
+function createkeyproduct($signature='',$servername){
+	$md = new MD5crypt();
+	$d 		= $md->decrypt($signature,$servername); //dt
+	$dec 	= str_replace('-','',$d);Xlog($dec);	
+	$param 	= $dec.'proxtrasofttechnologyinc';	
+	$dt= $md->encrypt($dec,$param);
+	return $dt;
 }
 }//
 

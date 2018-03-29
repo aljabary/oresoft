@@ -51,7 +51,7 @@
                   <ul class="list-wrapper">
 				  <?php
 				$pl = $this->getAllplugins();
-				$db = Xcon();
+				$db = Xcon(PERMISSION);
 				  foreach($pl as $key=>$val){
 				$g=  $pl[$key];
 				$fol ='plugins';
@@ -64,11 +64,13 @@
 			if($g['p_type']=='theme'){
 				$fol ='theme_perfthm';
 			}
+			
 			parent::setFolPn($fol,$pn);
 			$file = PROX_Domain.'/'.$fol.'/'.$g['base_class'].'/init.php';
-			if(is_file($file) && !class_exists($g['base_class'])){include(PROX_Domain.'/'.$fol.'/'.$g['base_class'].'/init.php');
+			if(is_file($file) && !class_exists('\\'.$g['base_class'].'\MainClass')){include(PROX_Domain.'/'.$fol.'/'.$g['base_class'].'/init.php');
 			}
 		$param 			= array("this"=>"PERMISSION");
+		$pn = '\\'.$pn.'\MainClass';
 		$plug 			= new $pn(null,$param);
 		
 		$mv = $plug->View->getKeystore();		

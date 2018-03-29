@@ -16,7 +16,7 @@ LiteMedia v.1.0.0
               <div class="panel-body">
 			  <h2 class="pd-15 mgtp--5"><strong>Upload</strong> <em class="vd_soft-grey">Photo, Video, Sound & File</em> </h2>
 			  <form enctype="multipart/form-data" method="post" action="<?php echo PROX_URL;?>ajax.php">
-			  <input type="hidden"  name="class" value="LiteMedia" />
+			  <input type="hidden"  name="class" value="LiteMedia\MainClass" />
 			   <input type="hidden"  name="function" value="upload" />
 			    <input type="hidden" name="plugins" value="1" />
 				<input type="hidden" name="url" value="<?php echo $data['url'];?>" />

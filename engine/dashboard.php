@@ -28,11 +28,11 @@ function __construct($rt,$pc){
 			$this->status 	=	 $g['status'];
 			$this->type 	=	 $g['p_type'];
 		}
-		$this->trigger('tools','Dashboard',$rt);		
+		//$this->trigger('tools','Dashboard',$rt);		
 		if($this->type !='tools'){		
 			$this->init($this->type); 
 		}
-		$this->trigger($this->type,'Dashboard',$rt);
+		//$this->trigger($this->type,'Dashboard',$rt);
 		$pl   		= $this->plugins[$this->type];
 		$this->Plugins_Manager = $pc;
 		$this->Plugins_Manager->plugins['tools'] = $this->plugins['tools'];

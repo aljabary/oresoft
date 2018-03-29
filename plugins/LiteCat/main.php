@@ -71,9 +71,9 @@ public function create_headericon_admin(){
 }
 function view($param,$hook){
 	if($hook!='Admin_Menu' && $hook!='Admin_Headericon'){	
-	$cc = new Category_Core($this);
+	$cc = new Category($this);
 	try {
-	$cat_list	=	$cc->getlist("0",0,10, 'desc');
+	//$cat_list	=	$cc->getlist("0",0,10, 'desc');
 	$tree		=	$cc->getlist("all",0,10, 'desc');
 	} catch (PxException $e) {      // Permission Exception
     echo $e;
@@ -98,12 +98,13 @@ function addnew(){
 	$edit_id 	= $_POST['editid'];
 	$kw			= $_POST['keywords'];
 	$parent		= $_POST['parent'];
-	$cc = new Category_Core($this);	
+	$cc = new Category($this);	
 	try {
 		if($edit_id <1){
 			$cc->create($name,$desc, $kw,$parent);
 		}else{
-		$cat = new Category($edit_id);
+		$cc->gen($edit_id);
+		$cat = $cc->Obj[0];//new Category($this,$edit_id);
 		$cat->name = $name;
 		$cat->description = $desc;
 		$cat->keyword = $kw;
@@ -117,11 +118,13 @@ function addnew(){
 }
 
 function updateparent(){
-	$cc 	= new Category_Core($this);
+	$cc 	= new Category($this);
 	$id 	= $_GET['child'];
 	$pid	= $_GET['parent'];	
-	$cat 	= new Category($id);
-	$parent 	= new Category($pid);
+	$cc->gen($id);
+	$cat 	= $cc->Obj[0];
+	$cc->gen($pid);
+	$parent 	= $cc->Obj[1];
 	$cat->parent = $parent;
 	$co = $cc->update($cat);
 }
@@ -130,11 +133,11 @@ function updateparent(){
 * other plugin can call this method
 */
 public function CatOption($article, $idElemetn){
-	$cc = new Category($this);
+	$cc 	= new Category($this);
 	try {
-	$tree		=	$cc->getlist("all",0,100, 'desc');
+		$tree	=	$cc->getlist("all",0,100, 'desc');
 	} catch (PxException $e) {      // Permission Exception
-    echo $e;
+		echo $e;
 	} 	
 	$this->View->Show("option", array("tree"=>$tree, 'article'=>$article, 'idel'=>$idElemetn));	
 }

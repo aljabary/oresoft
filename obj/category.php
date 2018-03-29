@@ -14,15 +14,19 @@ use Prox\Engine\Category;
 class Core  {
 	public $Obj;
 	private $i;
-function __construct($id=0,$g=null){ 
-	$this->Obj[0] 	= 	new Obj($id,$g);
-	$this->Obj[0]->parent 	= 	new Obj($this->Obj[0]->parent_id);
+function __construct($id=0){
+if($id){	
+	$ob 	= 	new Obj($id);
+	$ob->parent 	= 	new Obj($ob->parent_id);
+	$this->Obj[]	=	$ob;
+}
 	$this->i		=	0;
 }
-function gen($id=0,$g=null){
+function gen($id=0){
 	$x				=	$this->i;
-	$this->Obj[$x] 	= 	new Obj($id,$g);
-	$this->Obj[$x]->parent 	= 	new Obj($this->Obj[$x]->parent_id);
+	$ob  	= 	new Obj($id);
+	$ob->parent 	= 	new Obj($ob->parent_id);
+	$this->Obj[]	=	$ob;
 	$this->i++;
 }
 
@@ -35,9 +39,18 @@ class Obj {
 	public $parent;
 	public $parent_id;
 	public $url;
-function __construct($id=0,$g=null){
+function __construct($id=0){
 		$Xcon = Xcon(PERMISSION);
-	if($id > 0){	
+	if(is_array($id)){
+		$g = $id;
+		$this->id 			= $g['id'];
+		$this->name 		= htmlspecialchars($g['name']);
+		$this->keyword 		= htmlspecialchars($g['keyword']);
+		$this->description 	= htmlspecialchars($g['description']);
+		$this->parent_id	= $g['parent'];
+		$this->url			=	PROX_URL."category/".seo_link($g['name']);
+	}
+	else if($id > 0){	
 		$q 	=	mysqli_query($Xcon,"select * from category where id='$id'");
 		while($g=mysqli_fetch_array($q)){
 			$this->id 			= $g['id'];
@@ -47,17 +60,11 @@ function __construct($id=0,$g=null){
 			$this->parent_id	= $g['parent'];
 			$this->url			=	PROX_URL."category/".seo_link($g['name']);
 		}
-	}else if($g){
-		$this->id 			= $g['id'];
-		$this->name 		= htmlspecialchars($g['name']);
-		$this->keyword 		= htmlspecialchars($g['keyword']);
-		$this->description 	= htmlspecialchars($g['description']);
-		$this->parent_id	= $g['parent'];
-		$this->url			=	PROX_URL."category/".seo_link($g['name']);
 	}
 }
 	
 function getByName($name){
+	$Xcon = Xcon(PERMISSION);
 	$nm = str_replace('-',' ',$name);
 		$q 	=	mysqli_query($Xcon,"select * from category where name='$nm'");
 		while($g=mysqli_fetch_array($q)){

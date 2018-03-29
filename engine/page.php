@@ -1,17 +1,22 @@
 <?php
 /**
-@Article Core Class
+@Page Core Class
 @Proxtrasoft v.1.1.0
 @license	: GNU Lesser General Public License v3.0 AND Halal Open Project License
 @author		: Abu Zidane Asadudin Shakir Al-Jabary
 This class handling article processing data, insert, update, delete
 **/
-class Page_Core{
+namespace Prox\Engine;
+use Prox\System\Date_Time;
+use Prox\System\Permission;
+use Prox\Engine\Page\Core;
+class Page extends Core{
 	private $permission;
 	/**
 	initialize permission for plugins
 	*/
-function __construct(/*Plugins Base_Class*/ $bc){	
+function __construct(/*Plugins Base_Class*/ $bc,$id=0){
+		parent::__construct($bc,$id);
 		$this->permission 	= new Permission($bc);
 		}		
 /**
@@ -22,7 +27,7 @@ function __construct(/*Plugins Base_Class*/ $bc){
 function Create($Page,  $user){
 	$this->permission->validate('PAGE', 'WRITE', 15); //required permission
 	$this->permission->validate('CATEGORY', 'READ', 3); //required permission
-	$con 	= Xcon();
+	$con 	= Xcon(PERMISSION);
 	$name 	=	addslashes($Page['name']);
 	$content=	addslashes($Page['content']);
 	$today 	= 	date('Y-m-d H:i:s');
@@ -54,7 +59,7 @@ function Create($Page,  $user){
 function Update($Page, $user, $byother = false){
 	$this->permission->validate('PAGE', 'WRITE', 15); //required permission
 	$this->permission->validate('CATEGORY', 'READ', 3); //required permission
-	$con		=	Xcon();
+	$con		=	Xcon(PERMISSION);
 	if($Page->User->id == $user->id || $byother){	//must be enable by other or owner of Page is same with the user
 	$pid = $Page->parent->id;
 	$cat= $Page->Category->id;
@@ -82,7 +87,7 @@ function Update($Page, $user, $byother = false){
 */
 function Remove($Page, $user, $byother = false){
 	$this->permission->validate('PAGE', 'WRITE', 15); //required permission
-	$con		=	Xcon();
+	$con		=	Xcon(PERMISSION);
 	if($Page->User->id == $user->id || $byother){	//must be enable by other or owner of Page is same with the user
 	$q = mysqli_query($con,"delete from Page where id='$Page->id'");
 	return $q;
@@ -99,8 +104,8 @@ function Remove($Page, $user, $byother = false){
 */	
 function getlist($parent_id,$st,$nd, $status='all' ){
 	$this->permission->validate('PAGE', 'READ', 16); //required permission
-	$db 	= Xcon();
-	$data	=	array(); $i=0;	
+	$db 	= Xcon(PERMISSION);
+	$this->Obj	=	array(); $i=0;	
 	switch($parent_id){
 		case "all":$prt ="parent !='999999'" ;
 		break;
@@ -112,10 +117,9 @@ function getlist($parent_id,$st,$nd, $status='all' ){
 	}
 	$q 		=	mysqli_query($db,"select * from page where $prt order by id desc limit $st,$nd");
 	while($g =	mysqli_fetch_array($q)){
-		$pg	 	=	new Page($g['id']);
-		$data[$i]	=	$pg; $i++;
+		$this->gen($g['id']);
 	}
-	return $data;
+	return $this->Obj;
 }
 /**
 * get child Page 
@@ -123,14 +127,13 @@ function getlist($parent_id,$st,$nd, $status='all' ){
 */	
 function getChild($parent){
 	$this->permission->validate('PAGE', 'READ', 16); //required permission
-	$db 	= Xcon();
-	$data	=	array(); $i=0;	
+	$db 	= Xcon(PERMISSION);
+	$this->Obj	=	array(); $i=0;	
 	$q 		=	mysqli_query($db,"select * from page where parent='$parent->id' order by id desc");
 	while($g =	mysqli_fetch_array($q)){
-		$pg	 	=	new Page($g['id']);
-		$data[$i]	=	$pg; $i++;
+		$this->gen($g['id']);
 	}
-	return $data;
+	return $this->Obj;
 }
 
 /**
@@ -142,12 +145,21 @@ function getChild($parent){
 
 function View($page,$key){
 	if($key ==PERMISSION){ //locked method
-	$con		=	Xcon();
+	$con		=	Xcon(PERMISSION);
 	$view = $page->view + 1;
 	$q = mysqli_query($con,"update page set view ='$view' where id='$page->id'");
 	return $q;
 	}
 }
 
+public function getBySlug($name){
+		$nm = str_replace('-',' ',$name);
+		$con 	= Xcon(PERMISSION);
+		$this->Obj  = array();
+		$q 	=	mysqli_query($con,"select * from page where slug='$nm'");
+		while($g=mysqli_fetch_array($q)){
+			$this->gen($g);
+		}
+}
 }
 ?>

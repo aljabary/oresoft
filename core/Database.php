@@ -18,7 +18,7 @@ function connect(){
 	global $XCON;
 	$per = new Permission($this->BC);
 	$per->validate('DATABASE', '', 3);
-	return $XCON;
+	return Xcon(PERMISSION);
 }
 function query($sql){
 	if($log){

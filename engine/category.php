@@ -11,11 +11,13 @@ use Prox\Engine\Category\Core;
 use Prox\System\Permission;
 class Category extends Core{
 	private $permission;
+	private $BC;
 	/**
 	initialize permission for plugins
 	*/
-function __construct($bc,$id=0,$g=null){
-	parent::__construct($id,$g);
+function __construct($bc,$id=0){
+	parent::__construct($id);
+	$this->BC = $bc;
 	$this->permission 	= new Permission($bc);
 }	
 
@@ -39,7 +41,7 @@ function update($category){
 function getlist($parent_id,$st,$nd,$order){
 	$this->permission->validate('CATEGORY', 'READ', 3); //required permission
 	$db 	= Xcon(PERMISSION);
-	$data	=	array(); $i=0;	
+	$this->Obj	=	array(); $i=0;	
 	switch($parent_id){
 		case "all":$prt ="parent !='999999'" ;
 		break;
@@ -48,13 +50,13 @@ function getlist($parent_id,$st,$nd,$order){
 	}
 	$q 		=	mysqli_query($db,"select * from category where $prt order by id $order limit $st,$nd");
 	while($g =	mysqli_fetch_array($q)){
-		$this->gen(0,$g);
+		$this->gen($g);
 	}
 	return $this->Obj;
 }
 /**
 * get list article by category
-* @param Category $category : Category Object
+* @param Engine\Category\Obj $category : Category Object
 * @param int $st 	: index page
 * @param int $nd 	: number article count perpage
 */	
@@ -62,18 +64,18 @@ function getArticle($category, $st, $nd){
 	$this->permission->validate('CATEGORY', 'READ', 3); //required permission
 	$status = addslashes($status);
 	$db 	= Xcon(PERMISSION);
-	$data 	= array(); $i=0;
+	
 	$ix 	= 0;
 	if($st >0){
 		$ix =$nd*$st;
 	}
+	$ac 	= new Article($this->BC);
+	$ac->Obj 	= array(); 	
 	$q = mysqli_query($db,"select * from category_article inner join article on category_article.article=article.id where category_article.category='$category->id' order by article.id desc limit $ix,$nd");
 	while($g = mysqli_fetch_array($q)){
-		$article = new Article($g['article']);		
-		$data[$i] = $article;
-		$i++;
+		$ac->gen($g);
 	}	
-	return $data;
+	return $ac->Obj;
 }
 /**
 *	count total article by category
@@ -94,17 +96,19 @@ function countArticle($category){
 */
 function getMostUse($st, $nd){
 	$db 	= Xcon(PERMISSION);
-	$data 	= array(); $i=0;
+	$data 	= array(); $this->Obj = array();$i=0;
 	$ix 	= 0;
 	if($st >0){
 		$ix =$nd*$st;
 	}
 	$q = mysqli_query($db,"SELECT *, count(article) as c FROM category_article GROUP by category order by c desc limit $ix,$nd");
 	while($g = mysqli_fetch_array($q)){
-		$article = new Category($g['category']);		
+		$this->gen($g['category']);	
+		$article = 		$this->Obj[$i];
 		$data[$i] = array("category"=>$article,"count"=>$g['c']);
 		$i++;
 	}	
+	
 	return $data;
 }
 
@@ -118,7 +122,7 @@ function View($category,$key){
 	if($key ==PERMISSION){ //locked method
 	$con		=	Xcon(PERMISSION);
 	$view = $category->view + 1;
-	$q = mysqli_query($db,"update category set view ='$view' where id='$category->id'");
+	$q = mysqli_query($con,"update category set view ='$view' where id='$category->id'");
 	return $q;
 	}
 }

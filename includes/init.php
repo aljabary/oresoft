@@ -1,4 +1,6 @@
  <?php
+ 
+define('PERMISSION','pxpermission');
 /**Load Core for proccessing data to show data on view**/ 
  function loadDir($dire){
 		$dir = scandir($dire);
@@ -40,7 +42,6 @@ function seo_friendly($string){
   
    return $clear;
 }
-
 function seo_key($string){
    $clear = preg_replace('/[^a-zA-Z0-9\s]/', ' ', strip_tags(html_entity_decode($string)));   
    $clear = str_replace(' ', ', ', strip_tags($clear));
@@ -61,25 +62,7 @@ function seo_link($string){
  include PROX_Domain . '/application/' . 'template.class.php';
  /** Initialize Language **/
  includefile();
-	/*** auto load model classes ***/
-    function __autoload($class_name) {
-    $filename = strtolower($class_name) . '.class.php';
-    $file = PROX_Domain . '/model/' . $filename;
-
-    if (file_exists($file) == false)
-    {
-        return false;
-    }
-  include(PROX_Domain.$file);
-  $filename = strtolower($class_name) . '.php';
-    $file = PROX_Domain . '/engine/core/' . $filename;
-
-    if (file_exists($file) == false)
-    {
-        return false;
-    }
-  echo(PROX_Domain.$file);
-}
+	
  /*** a new registry object ***/
  $registry = new registry;
  /*** create the database registry object ***/

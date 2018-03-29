@@ -16,7 +16,7 @@ $current_url = curPageURL();
 
  define ('PROX_URL', 'http://localhost/oresoft/');
  define('PROX_URL_ADMIN','http://localhost/oresoft/px-admin');
- define('GRAPH','http://localhost/oresoft/graph/');
+ define('GRAPH','http://localhost/sellupbooster/graph/');
  define('TEMP','http://localhost/oresoft/temp/');
  define('ADM_EDITOR',1);
  define('ADM_ADMIN',2);
@@ -29,5 +29,4 @@ function BCL($plugins, $key){
 	$l = $l[$key];
 	return $l;
 	}
-define('PERMISSION','pxpermission');
 ?>

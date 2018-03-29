@@ -10,8 +10,11 @@ LiteTheme  v.2.1.1
 */
 namespace LiteTheme;
 use Prox\System\Site;
-use Prox\Engine\Article\Core;
+use Prox\Engine\Article;
 use Prox\Engine\Page;
+use Prox\Engine\Category;
+use Prox\Engine\User;
+use Prox\Engine\Comment;
 class LThome {
 public $arguments;
 public $param ;
@@ -22,13 +25,13 @@ public function __construct($arg,$param, $bc){
 	$this->BC = $bc;
 }
 public function Home(){
-	$ac 	=	new Article_Core($this->BC);
-	$pc 	= new Page_Core($this->BC);
+	$ac 	=	new Article($this->BC);
+	$pc 	= new Page($this->BC);
 	$site 	= new Site();
 	$pages		= $pc->getlist("all",0,100);
 	$curgape	=	0;
 	$blog 	=	$ac->getList("on",$curgape, 10);
-	$cc 		=	new Category_Core($this->BC);
+	$cc 		=	new Category($this->BC);
 	$catlist 	=	$cc->getMostUse(0,10);
 	//$this->BC->showHook($this->arguments,$this->param,"Admin_Menu",0);
 	$this->col_vav	=	$this->BC->Setting->getVal('color','linknav');
@@ -58,14 +61,15 @@ public function Home(){
 	$this->BC->View->Show("home",$data);
 }
 public function Read(){
-	$ac 		=	new Article_Core($this->BC);
-	$blog 		=	new Article($this->param[1]);
-	$pc			= 	new Page_Core($this->BC);
+	$ac 		=	new Article($this->BC,$this->param[1]);
+	
+	$blog 		=	$ac->Obj[0];
+	$pc			= 	new Page($this->BC);
 	$bloglstest	=	$ac->getList("on",0, 10);
 	$site 		= 	new Site();
 	$im 			=	new User();
 	$pages		= 	$pc->getlist("all",0,100);	
-	$cc 		=	new Category_Core($this->BC);
+	$cc 		=	new Category($this->BC);
 	$catlist 	=	$cc->getMostUse(0,10);
 	//$this->BC->showHook($this->arguments,$this->param,"Admin_Menu",0);
 	$this->col_vav	=	$this->BC->Setting->getVal('color','linknav');
@@ -93,27 +97,26 @@ public function Read(){
 	'w_catlist'=>true, 'catlist'=>$catlist,
 	'cookie'=>$this->param['cookie'],
 	'im'=>$im,
-	'comcore'=>new Comment_Core($this->BC)
+	'comcore'=>new Comment($this->BC)
 	);
 	$this->BC->View->Show("home",$data);
 }
 
 
 public function Page(){
-	$ac 		=	new Article_Core($this->BC);
-	$pageobj 	=	new Page(0,$this->BC);
-	$pageobj->getBySlug($this->param[0]);	
-	$pc 		= new Page_Core($this->BC);
+	$ac 		=	new Article($this->BC);
+	$pc 	=	new Page($this->BC);
+	$pc->getBySlug($this->param[0]);
+	$pageobj	=	$pc->Obj[0];	
 	$site 		= new Site();
 	$pages		= $pc->getlist("all",0,100);	
-	$cc 		=	new Category_Core($this->BC);
+	$cc 		=	new Category($this->BC);
 	$catlist 	=	$cc->getMostUse(0,10);
 	$bloglstest	=	$ac->getList("on",0, 10);
 	$curgape	=	0;
 	if(!empty($this->param[1]))	$curgape	=	$this->param[1] - 1;
 	$ctn		=	"page.static";
 	if($pageobj->type=='dinamic'){
-	$cc 		= 	new Category_Core($this->BC);
 	$blog 		=	$cc->getArticle($pageobj->Category, $curgape, 100);
 	$cb 		=	$cc->countArticle($pageobj->Category);
 	$ctn		=	"bloglist";
@@ -162,8 +165,8 @@ public function CustomRouting(){
 */
 public function NextPage($pi){
 	// $pi = 1 is same $pi =0, number page is 1 and page index is 0 ($pi - 1)
-	$ac 	=	new Article_Core($this->BC);
-	$pc = new Page_Core($this->BC);
+	$ac 	=	new Article($this->BC);
+	$pc = new Page($this->BC);
 	$site = new Site();
 	$pages		= $pc->getlist("all",0,100);
 	
@@ -198,12 +201,12 @@ public function NextPage($pi){
 }
 
 public function Category(){
-	$ac 		=	new Article_Core($this->BC);
+	$ac 		=	new Article($this->BC);
 	$category	= $this->param['Category'];
-	$pc 		= new Page_Core($this->BC);
+	$pc 		= new Page($this->BC);
 	$site 		= new Site();
 	$pages		= $pc->getlist("all",0,100);	
-	$cc 		=	new Category_Core($this->BC);
+	$cc 		=	new Category($this->BC);
 	$catlist 	=	$cc->getMostUse(0,10);
 	$bloglstest	=	$ac->getList("on",0, 10);
 	$curgape	=	0;
@@ -247,12 +250,12 @@ public function Category(){
 
 public function Tag(){
 	
-	$ac 		=	new Article_Core($this->BC);
+	$ac 		=	new Article($this->BC);
 	$tag 		=	$this->param['Tag'];
-	$pc 		= new Page_Core($this->BC);
+	$pc 		= new Page($this->BC);
 	$site 		= new Site();
 	$pages		= $pc->getlist("all",0,100);	
-	$cc 		=	new Category_Core($this->BC);
+	$cc 		=	new Category($this->BC);
 	$catlist 	=	$cc->getMostUse(0,10);
 	$bloglstest	=	$ac->getList("on",0, 10);
 	$curgape	=	0;
@@ -297,7 +300,7 @@ public function Contact(){
 		$title 	= $_POST['title'];
 		$msg 	= $_POST['content'];
 		if($name !='' && $email!='' && $msg!=''){
-			$mcc	=	new Message_Core($this->BC);
+			$mcc	=	new Message($this->BC);
 			$data = array(
 			'title'=>$name.' | '.$title,
 			'content'=>$msg,
@@ -311,10 +314,10 @@ public function Contact(){
 			header("location:".PROX_URL."contact/?msg=error");
 		}
 	}
-	$pc 		= new Page_Core($this->BC);
-	$ac 		=	new Article_Core($this->BC);
+	$pc 		= new Page($this->BC);
+	$ac 		=	new Article($this->BC);
 	$site 		= new Site();	
-	$cc 		=	new Category_Core($this->BC);
+	$cc 		=	new Category($this->BC);
 	$catlist 	=	$cc->getMostUse(0,10);
 	$bloglstest	=	$ac->getList("on",0, 10);
 	$curgape	=	0;

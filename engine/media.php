@@ -10,13 +10,17 @@ namespace Prox\Engine;
 use Prox\System\Permission;
 use Prox\Engine\Photo;
 use Prox\Engine\Document;
-class Media_Core{
+use Prox\Engine\Media\Core;
+use Prox\Engine\Media\ImageSizer;
+class Media extends Core{
 	private $permission;
-	
+	public $tp;
 	/**
 	initialize permission for plugins
 	*/
-function __construct(/*Plugins Base_Class*/ $bc, $DBinterface=null){	
+function __construct(/*Plugins Base_Class*/ $bc, $id=0,$tp=''){
+		parent::__construct($id,$tp);
+		$this->tp = $tp;
 		$this->permission 	= new Permission($bc);
 	
 }	
@@ -103,12 +107,12 @@ if ($_FILES)
 				$today 	= date('Y-m-d H:i:s'); 
 				mysqli_query($con,"insert into media (title,source,tp,dt) values('$title','$upfile','photo','$today')");
 				$idf = mysqli_insert_id($con);	
-			$m[75] 	= $this->thumb($value,$newfile, $path. "/" . $fn75, 75,75);
-			$m[75] 		= array_merge($m[75],array('id'=>$idf));
-			$m[150] 	= $this->thumb($value, $newfile, $path . "/" . $fn15, 150, 150);
-			$m[150] 	= array_merge($m[150],array('id'=>$idf));
-			$m[250] 	= $this->thumb($value, $newfile, $path . "/" .$fn25, 250, 250);
-			$m[250] 	= array_merge($m[250],array('id'=>$idf));
+				$m[75] 	= $this->thumb2($newfile, $path. "/" . $fn75, 75,75);
+				$m[75] 	= array_merge($m[75],array('id'=>$idf));
+				$m[150] = $this->thumb2($newfile, $path . "/" . $fn15, 150, 150);
+				$m[150] = array_merge($m[150],array('id'=>$idf));
+				$m[250] = $this->thumb2($newfile, $path . "/" .$fn25, 250, 250);
+				$m[250] = array_merge($m[250],array('id'=>$idf));
 			}
 		}else{
 			$m[0] = $this->VideoUpload($value,$title);
@@ -116,7 +120,15 @@ if ($_FILES)
    }
   }
 	return $m;
-	}
+}
+function thumb2($newfile,$fn,$h,$w){
+	
+// Load the original image
+$image = new ImageSizer($newfile);
+$image->resize($h,$w);
+$image->save($fn);
+return array("code"=>$ok,"message"=>$message);
+}
 function thumb($file, $bigname, $thumbname, $maxwidth, $maxheight)
  {
    // determine the image type
@@ -147,16 +159,17 @@ function thumb($file, $bigname, $thumbname, $maxwidth, $maxheight)
 $i = imagecreatetruecolor($newwidth, $newheight);
      if ($ext == ".jpg") { $j = imagecreatefromjpeg($newfile);  $imgFunc = 'imagejpeg';}
      if ($ext == ".png") { $j = imagecreatefrompng($newfile);	 $imgFunc = 'imagepng';
-		ImageAlphaBlending($j,true); 
-		ImageSaveAlpha($j,true); 	 }
+		//ImageAlphaBlending($j,true); 
+		//ImageSaveAlpha($j,true); 
+		}
      if ($ext == ".gif") { $j = imagecreatefromgif($newfile);	 $imgFunc = 'imagegif';
 		$transparent_index = ImageColorTransparent($j); 
         if($transparent_index!=(-1)){ $transparent_color = ImageColorsForIndex($j,$transparent_index); }
 	 }
      if($ext=='.png') 
      { 
-            ImageAlphaBlending($i,false); 
-            ImageSaveAlpha($i,true); 
+          //  ImageAlphaBlending($i,false); 
+           // ImageSaveAlpha($i,true); 
      } 
      if(!empty($transparent_color)) 
      { 
@@ -167,7 +180,7 @@ $i = imagecreatetruecolor($newwidth, $newheight);
      if ($j)
      { //imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
 
-		
+		//imagecopyresampled
       // Copy the original image and paste into the new image, resized
       if (imagecopyresized($i, $j, 0, 0, 0, 0, $newwidth, $newheight, $size[0], $size[1]))
       {
@@ -205,7 +218,7 @@ $i = imagecreatetruecolor($newwidth, $newheight);
 */
 function getPhoto($st,$nd){
 	$this->permission->validate('MEDIA', 'READ', 9); //required permission	
-	$data = $this->getList("photo",$st,$nd);
+	$data = $this->getList("Photo",$st,$nd);
 	return $data;
 }
 /**
@@ -262,24 +275,17 @@ function getPageCount($tp, $num){
 */	
 function getList($tp, $st, $nd){
 	$db 	= Xcon(PERMISSION);
-	$data 	= array(); $i=0;
+	$this->Obj[$tp]	= array(); $i=0;
 	$ix 	= 0;
 	if($st >0){
 		$ix =$nd*$st;
 	}
 	$q = mysqli_query($db,"select * from media where tp = '$tp' order by id desc limit $ix,$nd");
 	while($g = mysqli_fetch_array($q)){
-		switch($tp){
-			case 'photo': $media = new Photo($g['id']); break;
-			case 'audio': $media = new Auvi($g['id']); break;
-			case 'video': $media = new Auvi($g['id']); break;
-			case 'document': $media = new Document($g['id']);break;
-		}
-		$data[$i] = $media;
-		$i++;
+		$this->gen($g,$tp);		
 	}
 	
-	return $data;
+	return $this->Obj[$tp];
 }
 /**
 * this method for call media browser

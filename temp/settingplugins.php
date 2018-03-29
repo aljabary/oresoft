@@ -1,3 +1,4 @@
+
 			 <div class="panel vd_quick-press-widget widget">
     <div class="panel-heading vd_bg-blue">
         <h3 class="panel-title">
@@ -31,7 +32,7 @@
 				  <?php echo BCL('px','ps_warning_msg');?></div>
 				  <form method="post" action="<?php echo PROX_URL_ADMIN."/plugins/savehook/"; ?>"> 
 				  <input type="hidden" name="bc" value="<?php echo $this->plug->Base_Class;?>" />
-<?php $ap = new Apps();
+<?php $ap = new Prox\Plugins\Apps();
 $hk 	=	$ap->getHook($this->plug->Base_Class); 
 for($i=0;$i<count($hk);$i++){
  ?>	

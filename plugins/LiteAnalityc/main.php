@@ -104,20 +104,19 @@ if(strtolower($param[1])==strtolower($this->Base_Class)){ //Perfom only in own b
 	//$this->UseLib('Minify_Html');	
 	$this->UseLib('Carbon','Carbon');
 	
-	$carbon = new Carbon(); 
-	 $sv_last =Carbon::now()->subDays($rg);               // 5 days ago
-	$sv_next =  Carbon::now()->addDays(1).'<br>';      
-
-	$an = new Analityc($this);
-	$ac = new Article($this);
+	$carbon 	= new Carbon(); 
+	$sv_last 	=  Carbon::now()->subDays($rg);               // 5 days ago
+	$sv_next 	=  Carbon::now()->addDays(1);//.'<br>';      
+	$an 		= new Analityc($this);
+	$ac 		= new Article($this);
 	if($rout=='visitor'){
-	$newarticle	=	$ac->getListByDate($sv_last,$dt);
-	$dailycounter	=	$an->getVisitorByDate($sv_last,$sv_next,'date');
-	$device	=	$an->getVisitorByDate($sv_last,$sv_next,'devicetype');
-	$pages	=	$an->getVisitorByDate($sv_last,$sv_next,'pagetype');	
-	$this->View->Show("analityc", array("dailycounter"=>$dailycounter,
-	'newarticle'=>count($newarticle),	'device'=>$device,'pagecounter'=>$pages,'ft'=>$rg
-	));
+		$newarticle		=	$ac->getListByDate($sv_last,$dt);
+		$dailycounter	=	$an->getVisitorByDate($sv_last,$sv_next,'date');
+		$device			=	$an->getVisitorByDate($sv_last,$sv_next,'devicetype');
+		$pages			=	$an->getVisitorByDate($sv_last,$sv_next,'pagetype');	
+		$this->View->Show("analityc", array("dailycounter"=>$dailycounter,
+		'newarticle'=>count($newarticle),	'device'=>$device,'pagecounter'=>$pages,'ft'=>$rg
+		));
 	}
 	if($rout=='article'){
 	$pi=0;
@@ -137,9 +136,11 @@ if(strtolower($param[1])==strtolower($this->Base_Class)){ //Perfom only in own b
 		'page'=>$param[3],
 		'group'=>'date'
 		);
+		$ac->gen($param[3]);
 		$dailycounter	=	$an->graph($data);
 		$this->View->Show("analitycarticle", array(
-		"dailycounter"=>$dailycounter, 'aid'=>$param[3]
+		"dailycounter"=>$dailycounter, 'aid'=>$param[3],
+		"article"=>$ac->Obj[0]
 	));
 	}
 	}

@@ -40,7 +40,7 @@ Category v.1.0.0
 			
 			?>
 <form id="cateditor" action="<?php echo PROX_URL.'ajax.php'; ?>" method="post">	
-<input type="hidden" name="class" value="LiteCat"/>	
+<input type="hidden" name="class" value="LiteCat\MainClass"/>	
 <input type="hidden" name="function" value="addnew"/>	
 <input type="hidden" name="plugins" value="1" />	
 <input type="hidden" name="editid" id="edit_id"/>	
@@ -102,7 +102,7 @@ setparent:function(){
 	}
 	$.ajax({
 		url:"<?php echo PROX_URL;?>ajax.php",
-		data: "class=LiteCat&function=updateparent&plugins=1&parent="+par+"&child="+tau.child.li_attr.catid,
+		data: "class=LiteCat.MainClass&function=updateparent&plugins=1&parent="+par+"&child="+tau.child.li_attr.catid,
 	});
 }
 };

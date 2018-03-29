@@ -1,21 +1,25 @@
 <?php
 /**
-@Notification Core Class
+@Notification  Class
 @Proxtrasoft v.2.1.1
 @license	: GNU Lesser General Public License v3.0 AND Halal Open Project License
 @author		: Abu Zidane Asadudin Shakir Al-Jabary
 This class handling Notification processing data, insert, update, delete
 **/
-namespace Prox\Engine\Notification;
+namespace Prox\Engine;
+use Prox\Engine\Notification\Core;
 use Prox\System\Permission;
-class Core{
+class Notification extends Core{
 	private $permission;
+	private $BC;
 	/**
 	initialize permission for plugins
 	*/
-function __construct(/*Plugins Base_Class*/ $bc){	
-		$this->permission 	= new Permission($bc);
-		}	
+function __construct(/*Plugins Base_Class*/ $bc,$id=0){
+	parent::__construct($bc,$id);
+	$this->BC = $bc;	
+	$this->permission 	= new Permission($bc);
+}	
 /**
 * Create new instance a Notification
 * @param Array data
@@ -109,7 +113,7 @@ function getList($status,$user=null, $st, $nd){
 	$this->permission->validate('NOTIFICATION', 'READ', 23); //required permission
 	$status = addslashes($status);
 	$db 	= Xcon(PERMISSION);
-	$data 	= array(); $i=0;
+	$this->Obj 	= array(); $i=0;
 	$ix 	= 0;
 	if($st >0){
 		$ix =$nd*$st;
@@ -127,11 +131,9 @@ function getList($status,$user=null, $st, $nd){
 	}
 	$q = mysqli_query($db,"select * from notification $stat  $quser order by notification_id desc limit $ix,$nd");
 	while($g = mysqli_fetch_array($q)){
-		$com = new Notification($g['notification_id']);		
-		$data[$i] = $com;
-		$i++;
+		$this->gen($g);
 	}	
-	return $data;
+	return $this->Obj;
 }
 /**
 * Set status notification read or unread

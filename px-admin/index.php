@@ -1,8 +1,8 @@
 <?php
-session_set_cookie_params(0,"/","http://localhost/proxtrasoft"); //cross session
+session_set_cookie_params(0,"/","http://localhost/oresoft"); //cross session
 session_start();
 header('Access-Control-Allow-Origin: *');//ajax cross domain resource
-error_reporting(4);
+error_reporting(E_ERROR);
 $start_time=microtime(true);
 
 include '../includes/baseurl.php';
@@ -30,8 +30,7 @@ $path =realpath(dirname(__FILE__));
 $registry->router->loader();
 
 $end_time=microtime(true);
-echo "time: ", bcsub($end_time, $start_time, 4), "\n";
-echo "memory (K byte): ", (memory_get_peak_usage(true)/1024), "\n";
+echo "time: ", bcsub($end_time, $start_time, 4), "\n memory (K byte): ", (memory_get_peak_usage(true)/1024), "\n";
 /*
 <select id="timezone" class="chosen-select" name="timezone" style="display: none;">
 																				<option value="Pacific/Midway">

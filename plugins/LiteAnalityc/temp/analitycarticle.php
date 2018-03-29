@@ -11,8 +11,7 @@ Category v.1.0.0
 * id = LiteAnalityc : Base Class
 * data-tempa = LiteAnalityc-Editor : Base Class-Template hook name
 */
-
-$art = new Article($data['aid']);
+$art = $data['article'];
 ?>
     <link href="<?php echo TEMP;?>plugins/morris/morris.css" rel="stylesheet" type="text/css">	
  <div class="panel widget" id="LiteAnalityc" data-temp="LiteAnalityc-analityc">

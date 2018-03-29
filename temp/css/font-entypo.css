@@ -4,7 +4,7 @@
 	src:url('../fonts/entypod41d.eot?#iefix') format('embedded-opentype'),
 		url('../fonts/entypo.ttf') format('truetype'),
 		url('../fonts/entypo.woff') format('woff'),
-		url('http://localhost/proxtrasoft/temp/fonts/entypo.svg#entypo') format('svg');
+		url('../temp/fonts/entypo.svg#entypo') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }

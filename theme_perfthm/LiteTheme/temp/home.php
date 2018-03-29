@@ -11,6 +11,7 @@ LiteTheme v.1.1.0
 * id = LiteTheme : Base Class
 * data-tempa = LiteCate-Editor : Base Class-Template hook name
 */
+$pc = $data['pc']; $pg_par = $pc->getlist("0",0,100);
 ?><!DOCTYPE html>
 <!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
 <!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
@@ -146,7 +147,7 @@ $Me->showHook($data['args'],$data['param'],'Header_Meta',0);
               		<div class="vd_mega-menu-wrapper horizontal-menu">
                     	<div class="vd_mega-menu">                
             				<ul class="mega-ul nav">   
-	<?php $pc = $data['pc']; $pg_par = $pc->getlist("0",0,100);
+	<?php 
 	$home = $data['home'];
 	$ipr =count($pg_par);
 for($ipr ;$ipr>0;$ipr--){

@@ -37,9 +37,9 @@
 			 <div class="col-sm-12" data-rel="sortable" data-hook="backend_12">
 		<?php 
 		switch($PXargs){
-			case 'Plugins'		:	include(PROX_Domain.'/temp/listplugins.php');break;
-			case 'Plugins_Info'	: 	include(PROX_Domain.'/temp/infoplugins.php');break;
-			case 'Plugins_Setting'	: 	include(PROX_Domain.'/temp/settingplugins.php');break;
+			case 'Plugins'				:	include(PROX_Domain.'/temp/listplugins.php');break;
+			case 'Plugins_Info'			: 	include(PROX_Domain.'/temp/infoplugins.php');break;
+			case 'Plugins_Setting'		: 	include(PROX_Domain.'/temp/settingplugins.php');break;
 			case 'Plugins_Install_License':include(PROX_Domain.'/temp/plugins_install_license.php');break;
 			case 'Plugins_Install_Permission':include(PROX_Domain.'/temp/plugins_install_permission.php');break;
 			case 'Plugins_Install_Activation':include(PROX_Domain.'/temp/plugins_install_activation.php');break;
@@ -154,7 +154,7 @@ function setStatus(id){
 	}
 	$.ajax({
 		url:base_url+"ajax.php",
-		data:"class=Apps&function=setStatus&plugins="+id+"&status="+nst,
+		data:"class=Prox.Plugins.Apps&function=setStatus&plugins="+id+"&status="+nst,
 		success:function(){
 			if(st==1){
 		$("#plug"+id).html("Off");$("#plug"+id).attr("stat","0");$("#plug"+id).removeClass("vd_bg-green");$("#plug"+id).addClass("vd_bg-yellow");
@@ -169,7 +169,7 @@ function cekUpdatePlugins(){
 	$('#btnupdateplugin').html('<i class=\'fa fa-spinner fa-spin mgr-10\'></i> Checking...');
 $.ajax({
 url:base_url+"ajax.php",
-data:"class=Apps&function=cekupdate&plugins=<?php echo $this->plug->Base_Class;?>",
+data:"class=Prox.Plugins.Apps&function=cekupdate&plugins=<?php echo $this->plug->Base_Class;?>",
 success:function(j){
 	if(j.isready){
 	$("#iu_msg").prepend(' (v '+j.version+') ');

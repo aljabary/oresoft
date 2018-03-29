@@ -23,7 +23,7 @@ public function __construct($arg,$param){
 	/**
 	* initialize (required)
 	*/
-	$this->NC = new Notification\Core($this);
+	$this->NC = new Notification($this);
 	parent::__construct($this,$param);
 	$this->Manager = $this->PManager;
 	/**
@@ -80,7 +80,7 @@ $notif = $ib[$i];
         $photo = $site->logo;
 		}
 		
-$temp .='		 <li> 	<a href="'.PROX_URL.'ajax.php?plugins=1&class=LiteNotif&function=directo&not='.$notif->id.'"><div class="menu-icon"><img src="'.$photo.'"></div> 
+$temp .='		 <li> 	<a href="'.PROX_URL.'ajax.php?plugins=1&class=LiteNotif.MainClass&function=directo&not='.$notif->id.'"><div class="menu-icon"><img src="'.$photo.'"></div> 
                             <div class="menu-text"> '.$notif->content.'
                             	<div class="menu-info">
                                     <span class="menu-date">'.$notif->date.'</span>                                                                         
@@ -145,12 +145,14 @@ function showlistnotif(){
 	$this->View->Show("list",$data);
 }
 function directo(){
-	$this->notification = new Notification(addslashes($_GET['not']));
+	$nc = new Notification($this,addslashes($_GET['not']));
+	$this->notification	=	$nc->Obj[0];
 	$this->NC->setStatus($this->notification,0);
 	header("location:".$this->notification->urlresult);
 }
 function Btn_Click(){
-	$this->notification = new Notification(addslashes($_GET['not']));
+	$nc = new Notification($this,addslashes($_GET['not']));
+	$this->notification	=	$nc->Obj[0];
 	$ok = $this->NC->Remove($this->notification, new User());
 	
 }

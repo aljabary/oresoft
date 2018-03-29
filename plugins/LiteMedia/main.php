@@ -8,7 +8,7 @@ LiteMedia  v.1.0.0
 namespace LiteMedia;
 use Prox\System\Site;
 use Prox\Plugins\Manager_Plug_handler;
-use Prox\Engine\Media_Core;
+use Prox\Engine\Media;
 class MainClass extends Manager_Plug_handler{
 public $arguments;
 public $Manager;  				//(reuqired)
@@ -85,7 +85,7 @@ public function create_headericon_admin(){
 }
 function view($param,$hook){
 	if($hook!='Admin_Menu' && $hook!='Admin_Headericon'){ 
-	$mc = new Media_Core($this);
+	$mc = new Media($this);
 	try {	
 	} catch (PxException $e) {      // Permission Exception
     echo $e;
@@ -149,14 +149,15 @@ function upload(){
 		}
 		
    }
-	$mc = new Media_Core($this);
+	$mc = new Media($this);
 	$up	= $mc->PhotoUpload($_POST['lmtitle']);
 	if($tp !="photo"){		
-	$id = $up[0]['id'];
+		$id = $up[0]['id'];
 	}else{
-	$id = $up[75]['id'];
+		$id = $up[75]['id'];
 	}
-	}header("location:".$url.'/'.$id.'/'.$tp);
+	}
+	header("location:".$url.'/'.$id.'/'.$tp);
 }
 function backend($param,$hook){
 	if(strtolower($param[1])==strtolower($this->Base_Class)){ //Perfom only in own backennd page

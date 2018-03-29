@@ -28,7 +28,7 @@ $page = $data['page'];
                     <span class="vd_alert-icon"><i class="fa fa-exclamation-circle vd_red"></i></span><strong><?php echo BCL('LitePageManager','er_msg_req_title');?></strong> <?php echo BCL('LitePageManager','er_msg_req');?> </div>
 <div class="alert alert-success vd_hidden" >
                     <span class="vd_alert-icon"><i class="fa fa-check-circle vd_green"></i></span><strong><?php echo BCL('LitePageManager','suc_msg_title');?></strong> <?php echo BCL('LitePageManager','suc_msg');?> <a id="art_link" href=""><b><?php echo BCL('LitePageManager','suc_msg_click');?></b></a> </div>
-<input type="hidden" name="class" value="LitePageManager"/>	
+<input type="hidden" name="class" value="LitePageManager\MainClass"/>	
 <input type="hidden" name="function" value="submit"/>	
 <input type="hidden" name="plugins" value="1" />	
 <input type="hidden" name="editid" id="edit_id" value="<?php echo $page->id;?>"/>	

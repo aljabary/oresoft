@@ -8,6 +8,7 @@ This class handling view plugins
 **/
 namespace Prox\Engine\View;
 use Prox\Plugins;
+use MD5crypt;
 use Prox\System\PxException;
 class Core {
 	protected $Plugin_Handler;
@@ -52,33 +53,34 @@ class Core {
 		}
 	}
 	public function getKeystore(){
-		$Me = $this->bc;
+		$Me = $this->bc; 
+		
+		
 		$fn = PROX_Domain.'/'.$this->fol.'/'.$this->Plugin_Handler->Base_Class.'/temp/keystore.key';
+	
 		if(is_file($fn)){
-			$pcore = new Plugins\Core();
-			$pcore->UseLib('RijndaelCore');
-			$rij = new \RijndaelCore('proxtrasofttechnologyinc','sellupbooster');
+			$md = new MD5crypt();
 			$data = file_get_contents($fn);
-			$json= $rij->decrypt($data);
-			$meta = json_decode($json);	
+			$json= $md->decrypt($data,'proxtrasofttechnologyinc');
+			$meta = json_decode($json);//Xlog($json);	
 			$ex = false;
 			if($Me->Meta->name != $meta->name){
-				$ex = true; echo $meta->name;
+				$ex = true; echo $Me->Meta->name;
 			}
 			if($Me->Meta->type != $meta->type){
-				$ex = true;echo $Me->Meta->type;
+				//$ex = true;echo $meta->typeApp.' - '.$Me->Meta->typeApp;
 			}
 			if($Me->Meta->base_class != $meta->base_class){
-				$ex = true;echo $meta->base_class;
+				//$ex = true;echo $meta->base_class;
 			}
 			if($Me->Meta->developer->name != $meta->developer->name){
-				$ex = true;echo $meta->developer->name;
+				//$ex = true;echo $meta->developer->name;
 			}
 			if($Me->Meta->developer->url != $meta->developer->url){
-				$ex = true;echo $meta->developer->url;
+				//$ex = true;echo $meta->developer->url;
 			}
 			if($Me->Meta->developer->email != $meta->developer->email){
-				$ex = true;echo $meta->developer->email;
+				//$ex = true;echo $meta->developer->email;
 			}/*
 			if($Me->Meta->developer->id != $meta->developer->id){
 				$ex = true;
