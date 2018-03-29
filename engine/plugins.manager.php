@@ -45,7 +45,7 @@ function __construct($rt,$pc,$bc){
 		$base_class = UCfirst($bcl[0]).'_'.UCfirst($bcl[1]);
 		}
 		if(!empty($bc)){
-		$param 			= array_merge($this->routing,array("this"=>"PERMISSION"));
+		$param 			= array_merge($this->routing,array("this"=>PERMISSION));
 		$namespace 	=	'\\'.$base_class.'\MainClass';
 		$this->plug = new $namespace('Backend',$param);
 		}
